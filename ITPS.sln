@@ -5,6 +5,8 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITPS", "ITPS\ITPS.csproj", "{4BBB2DFB-71F5-4399-AB34-A84EBCB6C870}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITPS.Data", "ITPS.Data\ITPS.Data.csproj", "{15E55A8B-3138-4877-948E-0A4FA12A0465}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{4BBB2DFB-71F5-4399-AB34-A84EBCB6C870}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BBB2DFB-71F5-4399-AB34-A84EBCB6C870}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4BBB2DFB-71F5-4399-AB34-A84EBCB6C870}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15E55A8B-3138-4877-948E-0A4FA12A0465}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15E55A8B-3138-4877-948E-0A4FA12A0465}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15E55A8B-3138-4877-948E-0A4FA12A0465}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15E55A8B-3138-4877-948E-0A4FA12A0465}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
