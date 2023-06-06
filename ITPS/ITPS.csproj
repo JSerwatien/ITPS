@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ITPS.Data\ITPS.Data.csproj" />
+  </ItemGroup>
+
 </Project>

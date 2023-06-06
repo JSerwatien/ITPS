@@ -5,14 +5,33 @@
 <h1>Counter</h1>
 
 <p role="status">Current count: @currentCount</p>
+<p role="status">Current Chain: @ChainName</p>
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<button class="btn btn-primary" @onclick="GetChain">Get Chain</button>
+<button class="btn btn-primary" @onclick="GetChain">Get Chain From Parameter</button>
+<button class="btn btn-primary" @onclick="GetStudentCount">Get Student Count</button>
 
 @code {
-    private int currentCount = 0;
+    public int currentCount = 0;
+    public string ChainName = string.Empty;
 
     private void IncrementCount()
     {
         currentCount++;
+    }
+    private void GetStudentCount()
+    {
+
+        System.Data.DataSet ds = ITPS.Data.Code.DataFactory.GetDataSet("SELECT COUNT(*) C FROM dbo.Chain WITH(NOLOCK)", "StudentCount");
+        currentCount = Convert.ToInt16(ds.Tables[0].Rows[0][0]);
+    }
+    private void GetChain()
+    {
+        ChainName = ITPS.Data.Code.DataFactory.GetChainName(currentCount);
+    }
+    private void GetChainFromParameter()
+    {
+        ChainName = ITPS.Data.Code.DataFactory.GetChainNameByParameter(currentCount);
     }
 }
