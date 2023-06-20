@@ -137,4 +137,8 @@ DB Rules:
 	b)	Do not use reserved words in object names (ex. UserProfile instead of User)
 	c)	Audit field are not a "nice to have"
 	d)	All columns and object names should be in the singular form (ex. Ticket not Tickets)
-	
+	e)	Audit Fields:
+		CreatedDateTime
+		CreatedByUserProfileKey
+		LastUpdatedDateTime
+		LastUpdatedByUserProfileKey
