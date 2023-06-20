@@ -23,7 +23,7 @@ CREATE TABLE [dbo].[UserProfile](
 	[PhoneNumber] [varchar](50) NULL,
 	[ActiveInd] [tinyint] NULL,
 	[DepartmentKey] [int] NOT NULL,
-	[CreateDateTime] [datetime] NULL,
+	[CreatedDateTime] [datetime] NULL,
  CONSTRAINT [PK_UserProfile] PRIMARY KEY CLUSTERED 
 (
 	[UserProfileKey] ASC
