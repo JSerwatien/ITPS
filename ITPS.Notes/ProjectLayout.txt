@@ -1,0 +1,140 @@
+1)	Database
+	Tables:
+	a)	Ticket
+		i)	UserProfileKey	(NOT NULL)
+		ii)	AssignedToUserProfileKey (NULL)
+		iii)	Short Description
+		iv)	Long Description
+		v)	Priority
+		vi)	StatusKey
+		vii)	DueDate
+		viii)	Audit Fields
+		*)	Trigger for StatusHistory
+	b)	User
+		i)	FirstName
+		ii)	LastName
+		iii)	DepartmentKey
+		iv)	EmailAddress
+		v)	PhoneNumber
+		vi)	ActiveInd
+	c)	Department
+		i)	DepartmentName
+		ii)	DepartmentCode
+	d)	Status
+		i)	StatusCode
+		ii)	Description
+		iii)	ClosedInd
+	e)	Notes
+		i)	TicketKey
+		ii)	Note
+		iii)	AuditField
+	f)	StatusHistory
+		i)	TicketKey
+		ii)	OldStatusKey
+		iii)	NewStatusKey
+		iv)	UpdatedBy
+		v)	DateOfChange
+2)	UI
+	Pages:
+	a)	Login
+		i)	Credentials
+		ii)	**If time permits, add a "remember me" option
+	b)	Landing page (dashboard)
+		User:
+			i)	Top Row:
+				How many open tickets I have
+				How many open tickets in my department
+				How many tickets I have historically (closed vs open)
+				How many ticket are waiting for me (waiting for user)
+			ii)	Body (side-by-side)
+				Top 10 of my tickets (grid)
+				Coming Due / Over Due tickets (grid)
+		IT:
+			i)	Top row:
+				How many open tickets I have assigned to me
+				How many open tickets are unassigned
+				How many tickets historically (closed vs open; YTD)
+				How many ticket are past due (color-coded: Red if > 0)
+			ii)	Body (side-by-side)
+				Top 10 of my tickets (grid)
+				Coming Due / Over Due tickets (grid)
+			iii)	Tickets open vs closed monthly
+	c)	Request entry
+		i)	AssignedToUserProfileKey (NULL)
+		ii)	Short Description
+		iiii)	Long Description
+		iv)	Priority
+		v)	StatusKey
+		vi)	DueDate
+		vii)	Audit Fields (for display only)
+		viii)	Notes (historical and ability to add new)
+		viiii)	Status Historical (for display only)
+	d)	My tickets (user/department/assigned to me)
+		i)	TicketKey 
+		ii)	Short Description
+		iii)	Status
+		iv)		Priority
+		v)	DueDate
+		vi)	AssignedTo
+		viii)	Department
+	e)	Prioritize tickets
+		i)	TicketKey 
+		ii)	Short Description
+		iii)	Status
+		iv)		Priority
+		v)	DueDate
+		vi)	Ability to change priority
+	f)	Calendar View of due tickets (based on DueDate)
+		i)	TicketKey 
+		ii)	Short Description		
+3)	Business Requirements
+	a)	User cannot have more than 3 "waiting for user" tickets at any given time
+	b)	Notification for IT users on dashboard when ticket has Due Date that already passed
+	c)	Notes: When IT staff updates the ticket to "Waiting For User", a note is required.  When the ticket owner adds a note to a "Waiting For User" ticket, it updates the status to "In Progress".  Only IT can update the status of a ticket directly.
+4)	Entities
+	UserEntity
+		FirstName
+		LastName
+		Department
+		DepartmentKey
+		EmailAddress
+		PhoneNumber
+		StartUpObjects
+	DepartmentEntity
+		DepartmentKey
+		DepartmentCode
+		Description
+	TicketEntity
+		TicketKey
+		ShortDescription
+		LongDescription
+		AssignedToUserProfileKey
+		AssignedToDisplayName
+		DueDate
+		Priority
+		Status
+		<List> StatusHistory
+		<List> Notes
+	StartUpObjectEntity
+		<List> Status
+		<List> Users
+		<List> Departments
+	FrontPageDataEntity
+		Open tickets count
+		Unassigned ticket count
+		Historically count (closed)
+		Historically count (open)
+		Past due count
+		<List> Top 10 Tickets
+		<List> PastDue / ComingDue tickets
+		<List> Open Monthly Count
+		<List> Closed Monthly Count
+		
+	
+	
+DB Rules:
+	a)	First field in the table must be the primary key (INT Identity), and name {TableName}Key (ex. UserProfileKey)
+	b)	Do not use reserved words in object names (ex. UserProfile instead of User)
+	c)	Audit field are not a "nice to have"
+	d)	All columns and object names should be in the singular form (ex. Ticket not Tickets)
+	
