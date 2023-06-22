@@ -10,7 +10,7 @@ namespace ITPS.Data.Code
 {
     public class DataFactory
     {
-        private static readonly string connectionString = "Data Source=DESKTOP-K792KQS\\SQLEXPRESS;Initial Catalog =MCON343; Integrated Security = True;TrustServerCertificate=True";
+        private static readonly string connectionString = "Data Source=DESKTOP-K792KQS\\SQLEXPRESS;Initial Catalog =ITPS; Integrated Security = True;TrustServerCertificate=True";
         public static DataSet GetDataSet(string strSQL, string tableName)
         {
             try

@@ -17,6 +17,8 @@
 		iv)	EmailAddress
 		v)	PhoneNumber
 		vi)	ActiveInd
+		vii) UserName
+		viii) Password
 	c)	Department
 		i)	DepartmentName
 		ii)	DepartmentCode
@@ -100,6 +102,9 @@
 		EmailAddress
 		PhoneNumber
 		StartUpObjects
+		UserName
+		PAssword
+		ErrorMessage
 	DepartmentEntity
 		DepartmentKey
 		DepartmentCode
@@ -129,7 +134,10 @@
 		<List> PastDue / ComingDue tickets
 		<List> Open Monthly Count
 		<List> Closed Monthly Count
-		
+	Status
+		StatusCodeKey
+		StatusCode
+		Status
 	
 	
 DB Rules:
@@ -142,3 +150,5 @@ DB Rules:
 		CreatedByUserProfileKey
 		LastUpdatedDateTime
 		LastUpdatedByUserProfileKey
+	f)	Use table acronyms when using more than one table in a query
+	g)	Always use the WITH(NOLOCK) hint on all SELECT statements

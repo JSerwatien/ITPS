@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ITPS.Entity\ITPS.Entity.csproj" />
+  </ItemGroup>
+
 </Project>
