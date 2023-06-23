@@ -1,8 +1,13 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager NavManager
+@inject Radzen.DialogService dialogService
+@inject Radzen.NotificationService notificationService
 
 <PageTitle>ITPS</PageTitle>
 
 <div id="wrapper">
+    <Radzen.Blazor.RadzenDialog />
+    <RadzenNotification/>
     <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
@@ -19,7 +24,7 @@
 
         <!-- Nav Item - Dashboard -->
         <li class="nav-item active">
-            <a class="nav-link" href="index.html">
+            <a class="nav-link" href="/">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </a>
@@ -338,7 +343,9 @@
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                    @Body
+                    <div class="container" style="width:1500px">
+                        @Body
+                    </div>
                 <!-- /.container-fluid -->
 
             </div>
@@ -363,3 +370,17 @@
         </article>
     </main>
 </div>
+@code
+{
+    [CascadingParameter]
+    public CascadingAppState AppState { get; set; }
+    protected override void OnInitialized()
+    {
+        if(AppState.CurrentUser==null && !NavManager.Uri.ToUpper().Contains("/LOGIN"))
+        {
+            //AppState.SetProperty(this, "CurrentUser", ITPS.Data.Code.UserFactory.GetUserInformation("hru", "hru"));
+            //StateHasChanged();
+            NavManager.NavigateTo("/Login");
+        }
+    }
+}

@@ -7,7 +7,7 @@
 
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        @if(!string.IsNullOrEmpty(CurrentUser?.ErrorMessage))
+        @if (!string.IsNullOrEmpty(AppState.CurrentUser?.ErrorMessage))
         {
             <h1 class="h3 mb-0 text-gray-800">
                 <span style="color:red">@GetUserName()</span>
@@ -25,7 +25,7 @@
     </div>
 
     <!-- Content Row -->
-    @if(CurrentUser?.DepartmentCode==ITPS.Data.Code.Constants.DepartmentCode_IT)
+    @if (AppState.CurrentUser?.DepartmentCode == ITPS.Data.Code.Constants.DepartmentCode_IT)
     {
         <div class="row">
 
@@ -117,7 +117,7 @@
             </div>
         </div>
     }
-    else if (CurrentUser!=null)
+    else if (AppState.CurrentUser != null)
     {
         <div class="row">
 
@@ -226,31 +226,49 @@
 
     <!-- Content Row -->
     <div class="row">
-
         <!-- Content Column -->
-
-
-        <div class="col-lg-6 mb-4">
+        <div class="col-lg-6 mb-6">
 
             <!-- Illustrations -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Illustrations</h6>
-                </div>
+            <div class="card shadow mb-6">
                 <div class="card-body">
-                    <div class="text-center">
-                        <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;"
-                             src="img/undraw_posting_photo.svg" alt="...">
-                    </div>
+                    <p>
+                        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                                        Data="@PageModel.Top10Tickets" TItem="TicketEntity" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                            <Columns>
+                                <RadzenDataGridColumn TItem="TicketEntity" Property="TicketKey" Title="ID" TextAlign="TextAlign.Center" />
+                                <RadzenDataGridColumn TItem="TicketEntity" Property="ShortDescription" Title="Description" />
+                                <RadzenDataGridColumn TItem="TicketEntity" Property="AssignedToDisplayName" Title="Assigned To" />
+                                <RadzenDataGridColumn TItem="TicketEntity" Property="DueDate" Title="Due Date" FormatString="{0:d}" />
+                                <RadzenDataGridColumn TItem="TicketEntity" Property="Status" Title="Status" />
+                                <RadzenDataGridColumn TItem="TicketEntity" Property="Region" Title="Region" />
+                                <RadzenDataGridColumn TItem="TicketEntity" Title="Notes" TextAlign="TextAlign.Center">
+                                    <Template Context="TheData">
+                                        @*@TheData.NotesList.Count()*@
+                                    </Template>
+                                </RadzenDataGridColumn>
+                            </Columns>
+                        </RadzenDataGrid>
+                    </p>
+
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-lg-6 mb-6">
+
+            <!-- Illustrations -->
+            <div class="card shadow mb-6">
+
+                <div class="card-body">
+
                     <p>
                         Add some quality, svg illustrations to your project courtesy of <a target="_blank" rel="nofollow" href="https://undraw.co/">unDraw</a>, a
                         constantly updated collection of beautiful svg images that you can use
                         completely free and without attribution!
                     </p>
-                    <a target="_blank" rel="nofollow" href="https://undraw.co/">
-                        Browse Illustrations on
-                        unDraw &rarr;
-                    </a>
+
                 </div>
             </div>
 
@@ -262,12 +280,13 @@
 <!-- /.container-fluid -->
 @code
 {
+    [CascadingParameter]
+    public CascadingAppState AppState { get; set; }
+
     private FrontPageDataEntity PageModel = new();
-    private UserEntity CurrentUser = new();
 
     protected override void OnInitialized()
     {
-        CurrentUser = UserFactory.GetUserInformation("joshs", "joshs");
         PopulateDummyData();
         StateHasChanged();
     }
@@ -282,11 +301,11 @@
     }
     private string GetUserName()
     {
-        if(CurrentUser==null)
+        if (AppState.CurrentUser == null)
         { return "Loading User..."; }
-        else if (!string.IsNullOrEmpty(CurrentUser.ErrorMessage))
-        { return CurrentUser.ErrorMessage; }
+        else if (!string.IsNullOrEmpty(AppState.CurrentUser.ErrorMessage))
+        { return AppState.CurrentUser.ErrorMessage; }
         else
-        { return "Welcome Back, " + CurrentUser.FirstName + "  " + CurrentUser.LastName; }
+        { return "Welcome Back, " + AppState.CurrentUser.FirstName + "  " + AppState.CurrentUser.LastName; }
     }
 }
