@@ -118,6 +118,7 @@
 		DueDate
 		Priority
 		Status
+		StatusKey
 		<List> StatusHistory
 		<List> Notes
 	StartUpObjectEntity

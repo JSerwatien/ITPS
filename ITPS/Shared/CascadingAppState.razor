@@ -1,0 +1,88 @@
+﻿@*@implements IAppState*@
+@using ITPS.Entity
+@*@inject Radzen.DialogService dialogService*@
+@inject NavigationManager NavManager
+<CascadingValue Value="this">
+    @ChildContent
+</CascadingValue>
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    private string Caller = "";
+    public int TimeToLiveInSeconds { get; set; } = 60;
+    public DateTime LastAccessed { get; set; } = DateTime.Now;
+
+    public void SetProperty(ComponentBase caller, string PropertyName,
+                            object PropertyValue, bool SaveChanges = true)
+    {
+        try
+        {
+            var prop = this.GetType().GetProperty(PropertyName);
+            if (prop != null)
+            {
+                this.Caller = caller.GetType().Name;
+                prop.SetValue(this, PropertyValue);
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+    private string message = "";
+    public string Message
+    {
+        get => message;
+        private set
+        {
+            message = value;
+            if (Caller == "Toolbar")
+            {
+                // The Toolbar component changed the AppState Message property
+            }
+        }
+    }
+
+    private bool enabled = false;
+    public bool Enabled
+    {
+        get => enabled;
+        private set
+        {
+            enabled = value;
+        }
+    }
+    private UserEntity currentuser = null;
+
+    public UserEntity CurrentUser
+    {
+        get => currentuser;
+        private set
+        {
+            currentuser = value;
+        }
+    }
+
+    public void PopLogin()
+    {
+        SetProperty(this, "CurrentUser", new UserEntity());
+        //dialogService.Open<CPS.Web.Pages.LogIn>("LogIn", null, new Radzen.DialogOptions() { Width = "800px", Height = "570px", Resizable = true, Draggable = true });
+        StateHasChanged();
+    }
+    private async void DialogPopupClosed(dynamic theResult)
+    {
+        if (theResult != null && theResult == true)
+        {
+            //NavManager.NavigateTo("index");
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender) // do this only once
+        {
+            //dialogService.OnClose += DialogPopupClosed;
+        }
+    }
+}

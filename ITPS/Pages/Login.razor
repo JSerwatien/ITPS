@@ -1,0 +1,68 @@
+﻿@page "/login"
+@inject NavigationManager NavManager
+@inject Radzen.NotificationService notificationService
+
+<div class="container">
+    @if (!string.IsNullOrEmpty(AppState.CurrentUser?.ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @((MarkupString)AppState.CurrentUser?.ErrorMessage)
+        </div>
+    }
+    <!-- Outer Row -->
+    <div class="row justify-content-center">
+        <div class="col-xl-10 col-lg-12 col-md-9">
+        <Radzen.Blazor.RadzenDialog/>
+        <radzen.Blazor.Radzen.Blazor.RadzenNotification/>
+            <div class="card o-hidden border-0 shadow-lg my-5">
+                <div class="card-body p-0">
+
+                    <!-- Nested Row within Card Body -->
+                    <div class="row">
+                        <div class="col-lg-6 d-none d-lg-block">
+                            <img src="/img/login.png" />
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="p-5">
+                                <div class="text-center">
+                                    <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+                                </div>
+                                <form class="user">
+                                    <div class="form-group">
+                                        <Radzen.Blazor.RadzenTextBox type="email" class="form-control form-control-user" placeholder="Enter Email Address..." @bind-Value="@UserName" />
+                                    </div>
+                                    <div class="form-group">
+                                        <Radzen.Blazor.RadzenTextBox type="password" class="form-control form-control-user" placeholder="Enter Password..." @bind-Value="@Password" />
+                                    </div>
+                                    <Radzen.Blazor.RadzenButton class="btn btn-primary btn-user btn-block material-symbols-outlined" Text="Login"  Click="@LogUserIn">Login</Radzen.Blazor.RadzenButton>
+                                    <hr>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@code {
+    [CascadingParameter]
+    public CascadingAppState AppState { get; set; }
+    string UserName = string.Empty;
+    string Password = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        AppState.SetProperty(this,"CurrentUser", new UserEntity());
+    }
+    private void LogUserIn()
+    {
+        AppState.SetProperty(this, "CurrentUser", ITPS.Data.Code.UserFactory.GetUserInformation(UserName, Password));
+        if (string.IsNullOrEmpty(AppState.CurrentUser.ErrorMessage))
+        { NavManager.NavigateTo("/"); }
+        else
+        { notificationService.Notify(Radzen.NotificationSeverity.Error, "Error Logging In", AppState.CurrentUser.ErrorMessage, 3000); }
+    }
+}
