@@ -1,6 +1,6 @@
 ﻿@*@implements IAppState*@
 @using ITPS.Entity
-@*@inject Radzen.DialogService dialogService*@
+@inject Radzen.DialogService dialogService
 @inject NavigationManager NavManager
 <CascadingValue Value="this">
     @ChildContent
@@ -67,7 +67,7 @@
     public void PopLogin()
     {
         SetProperty(this, "CurrentUser", new UserEntity());
-        //dialogService.Open<CPS.Web.Pages.LogIn>("LogIn", null, new Radzen.DialogOptions() { Width = "800px", Height = "570px", Resizable = true, Draggable = true });
+        dialogService.Open<ITPS.Pages.Login>("LogIn", null, new Radzen.DialogOptions() { Width = "800px", Height = "570px", Resizable = true, Draggable = true });
         StateHasChanged();
     }
     private async void DialogPopupClosed(dynamic theResult)
@@ -82,7 +82,9 @@
     {
         if (firstRender) // do this only once
         {
-            //dialogService.OnClose += DialogPopupClosed;
+            dialogService.OnClose += DialogPopupClosed;
+            PopLogin();
+            await InvokeAsync(StateHasChanged);
         }
     }
 }

@@ -138,7 +138,7 @@
         <div id="content-wrapper" class="d-flex flex-column">
 
             <!-- Main Content -->
-            <div id="content">
+                <div id="content" style="width:1500px !important;">
 
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
@@ -355,8 +355,9 @@
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                    <div class="container" style="width:1500px">
-                        @Body
+                    <div class="container" style="width:100% !important">
+                        @if(AppState.CurrentUser!=null && AppState.CurrentUser.UserProfileKey>0)
+                        {@Body}
                     </div>
                 <!-- /.container-fluid -->
 
@@ -390,7 +391,12 @@
     {
         if(AppState.CurrentUser==null && !NavManager.Uri.ToUpper().Contains("/LOGIN"))
         {
-            NavManager.NavigateTo("/Login");
+            //NavManager.NavigateTo("/Login");
         }
+        dialogService.OnClose += ReloadPage;
+    }
+    public void ReloadPage(dynamic theResult)
+    {
+        StateHasChanged();
     }
 }

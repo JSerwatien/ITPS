@@ -60,9 +60,21 @@
     private void LogUserIn()
     {
         AppState.SetProperty(this, "CurrentUser", ITPS.Data.Code.UserFactory.GetUserInformation(UserName, Password));
+        RefreshMainLayout();
         if (string.IsNullOrEmpty(AppState.CurrentUser.ErrorMessage))
         { NavManager.NavigateTo("/"); }
         else
         { notificationService.Notify(Radzen.NotificationSeverity.Error, "Error Logging In", AppState.CurrentUser.ErrorMessage, 3000); }
+    }
+    private async void RefreshMainLayout()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        {
+            
+        }
     }
 }

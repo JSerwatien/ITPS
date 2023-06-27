@@ -8,5 +8,6 @@ namespace ITPS.Entity
 {
     public class TicketEntity
     {
+        public List<TicketNoteEntity> NoteList { get; set; }
     }
 }

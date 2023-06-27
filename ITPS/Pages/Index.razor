@@ -1,9 +1,10 @@
 ﻿@page "/"
 @page "/Index"
+@using Radzen
 @using ITPS.Data.Code;
 
 <!-- Begin Page Content -->
-<div class="container-fluid">
+<div class="container-fluid" style="width:1500px !important; margin-left:-225px">
 
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -234,7 +235,7 @@
                 <div class="card-body">
                     <p>
                         <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                                        Data="@PageModel.Top10Tickets" TItem="TicketEntity" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                        Data="@PageModel.Top10Tickets" TItem="TicketEntity" LogicalFilterOperator="LogicalFilterOperator.Or" >
                             <Columns>
                                 <RadzenDataGridColumn TItem="TicketEntity" Property="TicketKey" Title="ID" TextAlign="TextAlign.Center" />
                                 <RadzenDataGridColumn TItem="TicketEntity" Property="ShortDescription" Title="Description" />
@@ -244,7 +245,7 @@
                                 <RadzenDataGridColumn TItem="TicketEntity" Property="Region" Title="Region" />
                                 <RadzenDataGridColumn TItem="TicketEntity" Title="Notes" TextAlign="TextAlign.Center">
                                     <Template Context="TheData">
-                                        @*@TheData.NotesList.Count()*@
+                                        @TheData.NoteList.Count()
                                     </Template>
                                 </RadzenDataGridColumn>
                             </Columns>
@@ -264,9 +265,23 @@
                 <div class="card-body">
 
                     <p>
-                        Add some quality, svg illustrations to your project courtesy of <a target="_blank" rel="nofollow" href="https://undraw.co/">unDraw</a>, a
-                        constantly updated collection of beautiful svg images that you can use
-                        completely free and without attribution!
+                        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                                        Data="@PageModel.Top10Tickets" TItem="TicketEntity" LogicalFilterOperator="LogicalFilterOperator.Or">
+                            <Columns>
+                                <RadzenDataGridColumn TItem="TicketEntity" Property="TicketKey" Title="ID" TextAlign="TextAlign.Center" />
+                                <RadzenDataGridColumn TItem="TicketEntity" Property="ShortDescription" Title="Description" />
+                                <RadzenDataGridColumn TItem="TicketEntity" Property="AssignedToDisplayName" Title="Assigned To" />
+                                <RadzenDataGridColumn TItem="TicketEntity" Property="DueDate" Title="Due Date" FormatString="{0:d}" />
+                                <RadzenDataGridColumn TItem="TicketEntity" Property="Status" Title="Status" />
+                                <RadzenDataGridColumn TItem="TicketEntity" Property="Region" Title="Region" />
+                                <RadzenDataGridColumn TItem="TicketEntity" Title="Notes" TextAlign="TextAlign.Center">
+                                    <Template Context="TheData">
+                                        @TheData.NoteList.Count()
+                                    </Template>
+                                </RadzenDataGridColumn>
+                            </Columns>
+                        </RadzenDataGrid>
+
                     </p>
 
                 </div>
@@ -297,7 +312,7 @@
         PageModel.DepartmentTicketsCount = newRandom.Next();
         PageModel.ClosedVsOpen = newRandom.Next();
         PageModel.NeedingMyAttentionCount = newRandom.Next();
-
+        PageModel.Top10Tickets = new();
     }
     private string GetUserName()
     {

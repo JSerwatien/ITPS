@@ -11,7 +11,6 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<DialogService>();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
