@@ -85,3 +85,87 @@ CREATE TABLE [dbo].[StatusHistory](
 	UpdatedBy varchar (30) NOT NULL,
 	DateOfChange datetime NOT NULL
 )
+
+
+
+
+
+alter table [dbo].[Ticket]
+alter column UserProfileKey int not null
+
+alter table [dbo].Ticket
+add TicketKey int Not Null
+CONSTRAINT [PK_Ticket] PRIMARY KEY CLUSTERED 
+(
+	[TicketKey] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+
+ALTER TABLE [dbo].[StatusHistory]
+ADD CONSTRAINT [PK_StatusHistory] PRIMARY KEY CLUSTERED
+(
+    [StatusHistoryKey] ASC
+)
+WITH (
+    PAD_INDEX = OFF, 
+    STATISTICS_NORECOMPUTE = OFF, 
+    IGNORE_DUP_KEY = OFF, 
+    ALLOW_ROW_LOCKS = ON, 
+    ALLOW_PAGE_LOCKS = ON
+);
+
+
+ALTER TABLE [dbo].[Status]
+ADD CONSTRAINT [PK_Status] PRIMARY KEY CLUSTERED
+(
+    [StatusCode] ASC
+)
+WITH (
+    PAD_INDEX = OFF, 
+    STATISTICS_NORECOMPUTE = OFF, 
+    IGNORE_DUP_KEY = OFF, 
+    ALLOW_ROW_LOCKS = ON, 
+    ALLOW_PAGE_LOCKS = ON
+);
+
+
+ALTER TABLE [dbo].[Notes]
+ADD CONSTRAINT [PK_Notes] PRIMARY KEY CLUSTERED
+(
+    [NoteKey] ASC
+)
+WITH (
+    PAD_INDEX = OFF, 
+    STATISTICS_NORECOMPUTE = OFF, 
+    IGNORE_DUP_KEY = OFF, 
+    ALLOW_ROW_LOCKS = ON, 
+    ALLOW_PAGE_LOCKS = ON
+);
+
+INSERT INTO Status (Description, ClosedInd)
+VALUES
+    ('Open', 1),
+    ('In Progress', 1),
+    ('Cancelled', 1),
+	('Completed',1);
+
+
+
+
+ALTER TABLE [dbo].[Ticket]  WITH CHECK ADD  CONSTRAINT [FK_Ticket_DUserProfile] FOREIGN KEY([UserProfileKey])
+REFERENCES [dbo].[UserProfile] ([UserProfileKey])
+GO
+
+
+ALTER TABLE [dbo].[Ticket]  WITH CHECK ADD  CONSTRAINT [FK_Ticket_Status] FOREIGN KEY([StatusKey])
+REFERENCES [dbo].[Status] ([StatusCode])
+GO
+
+
+ALTER TABLE [dbo].[StatusHistory]  WITH CHECK ADD  CONSTRAINT [FK_StatusHistory_Ticket] FOREIGN KEY([TicketKey])
+REFERENCES [dbo].[Ticket] ([TicketKey])
+GO
+
+ALTER TABLE [dbo].[Notes]  WITH CHECK ADD  CONSTRAINT [FK_Note_Ticket] FOREIGN KEY([TicketKey])
+REFERENCES [dbo].[Ticket] ([TicketKey])
+GO
