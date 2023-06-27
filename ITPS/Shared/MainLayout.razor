@@ -378,8 +378,6 @@
     {
         if(AppState.CurrentUser==null && !NavManager.Uri.ToUpper().Contains("/LOGIN"))
         {
-            //AppState.SetProperty(this, "CurrentUser", ITPS.Data.Code.UserFactory.GetUserInformation("hru", "hru"));
-            //StateHasChanged();
             NavManager.NavigateTo("/Login");
         }
     }

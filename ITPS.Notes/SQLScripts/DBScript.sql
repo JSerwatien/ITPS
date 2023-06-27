@@ -48,7 +48,8 @@ GO
 
 
 CREATE TABLE [dbo].[Ticket](
-	[UserProfileKey] [int] IDENTITY(1,1) NOT NULL,
+	[TicketKey] [int] IDENTITY(1,1) NOT NULL,
+	[UserProfileKey] [int] NULL,
 	[AssignedToUserProfileKey] [int] NULL,
 	[ShortDescription] [varchar](50) NULL,
 	[LongDescription] [varchar](100) NULL,
@@ -63,7 +64,8 @@ CREATE TABLE [dbo].[Ticket](
 
 
 CREATE TABLE [dbo].[Status](
-	[StatusCode][int]IDENTITY(1,1)NOT NULL,
+	[StatusCodeKey][int]IDENTITY(1,1)NOT NULL,
+	[StatusCode][varchar](5)NOT NULL,
 	[Description][varchar](50)NOT NULL,
 	[ClosedInd][int]NULL
 )
@@ -82,6 +84,6 @@ CREATE TABLE [dbo].[StatusHistory](
 	TicketKey int NOT NULL,
 	OldStatusKey int NULL,
 	NewStatusKey int NULL,
-	UpdatedBy varchar (30) NOT NULL,
+	UpdatedBy varchar (30) NULL,
 	DateOfChange datetime NOT NULL
 )
