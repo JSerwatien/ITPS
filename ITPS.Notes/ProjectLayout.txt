@@ -159,3 +159,8 @@ DB Rules:
 	1)	Populate Front Page entity
 	2)	Enter form
 	3)	Adding grids to front page and fix navigation not showing after login
+
+	Thursday:
+	1)	Bind controls on entry form to entity
+	2)	Save entry
+	3)	Review grids on front page (and look at charts)
