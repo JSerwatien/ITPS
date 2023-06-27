@@ -2,6 +2,7 @@
 {
     public class UserEntity
     {
+        public int UserProfileKey { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Department { get; set; }
@@ -14,5 +15,6 @@
         public DateTime CreatedDateTime { get; set; }
         public bool ActiveInd { get; set; }
         public string ErrorMessage { get; set; }
+        public StartUpObjectEntity StartupObjects { get; set; }
     }
 }

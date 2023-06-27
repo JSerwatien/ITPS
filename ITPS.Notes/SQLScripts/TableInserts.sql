@@ -13,3 +13,12 @@ INSERT INTO UserProfile (FirstName, LastName,  EmailAddress, PhoneNumber, Active
 	('HR', 'User', 'michali@email.com','3265987410',1,3,'hru','hru'),
 	('Marketing', 'User', 'michali@email.com','3256985200',1,4,'marketingu','marketingu')
 GO
+INSERT INTO Status (Description, ClosedInd, StatusCode)
+VALUES
+    ('Open', 0, 'OPEN'),
+    ('In Progress', 0, 'INPRG'),
+    ('Cancelled', 1, 'CANCL'),
+    ('On Hold', 1, 'ONHLD'),
+    ('Waiting For User', 1, 'WAITU'),
+	('Completed',1, 'CMPLT');
+GO

@@ -23,6 +23,7 @@ namespace ITPS.Data.Code
                 returnData.UserName = userName;
                 returnData.Password = passWord;
                 returnData = PopulateUserInformation(ds, returnData);
+                returnData.StartupObjects = StartupFactory.GetStartUpData();
             }
             catch (Exception ex)
             {

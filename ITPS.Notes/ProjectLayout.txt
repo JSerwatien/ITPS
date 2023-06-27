@@ -128,10 +128,10 @@
 	FrontPageDataEntity
 		Open tickets count
 		Unassigned ticket count
-		Historically count (closed)
-		Historically count (open)
+		Historical count (closed)
+		Historical count (open)
 		Past due count
-		<List> Top 10 Tickets
+		<List> Top 10 Oldest Tickets
 		<List> PastDue / ComingDue tickets
 		<List> Open Monthly Count
 		<List> Closed Monthly Count
@@ -153,3 +153,9 @@ DB Rules:
 		LastUpdatedByUserProfileKey
 	f)	Use table acronyms when using more than one table in a query
 	g)	Always use the WITH(NOLOCK) hint on all SELECT statements
+
+
+	Current HW:
+	1)	Populate Front Page entity
+	2)	Enter form
+	3)	Adding grids to front page and fix navigation not showing after login
