@@ -46,3 +46,42 @@ GO
 ALTER TABLE [dbo].[UserProfile] CHECK CONSTRAINT [FK_UserProfile_Department]
 GO
 
+
+CREATE TABLE [dbo].[Ticket](
+	[UserProfileKey] [int] IDENTITY(1,1) NOT NULL,
+	[AssignedToUserProfileKey] [int] NULL,
+	[ShortDescription] [varchar](50) NULL,
+	[LongDescription] [varchar](100) NULL,
+	[Priority][int] NULL,
+	[StatusKey][int] NULL,
+	[DueDate][datetime] NULL,
+	CreatedDateTime datetime NULL,
+	CreatedByUserProfileKey int NULL,
+	LastUpdatedDateTime datetime NULL,
+	LastUpdatedByUserProfileKey int NULL
+)
+
+
+CREATE TABLE [dbo].[Status](
+	[StatusCode][int]IDENTITY(1,1)NOT NULL,
+	[Description][varchar](50)NOT NULL,
+	[ClosedInd][int]NULL
+)
+
+CREATE TABLE [dbo].[Notes](
+	[NoteKey][int]IDENTITY(1,1)NOT NULL,
+	[TicketKey][int]NOT NULL,
+	[Note][varchar](100)NULL,
+	CreatedDateTime datetime NULL,
+	CreatedByUserProfileKey int NULL,
+	LastUpdatedDateTime datetime NULL,
+	LastUpdatedByUserProfileKey int NULL
+)
+CREATE TABLE [dbo].[StatusHistory](
+	StatusHistoryKey int IDENTITY (1,1) NOT NULL,
+	TicketKey int NOT NULL,
+	OldStatusKey int NULL,
+	NewStatusKey int NULL,
+	UpdatedBy varchar (30) NOT NULL,
+	DateOfChange datetime NOT NULL
+)
