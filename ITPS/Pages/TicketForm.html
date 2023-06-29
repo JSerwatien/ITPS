@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ticket Form</title>
+
+</head>
+<body>
+    <h1>Ticket Form</h1>
+
+    <form>
+        <label for="assigned-to">Assigned To:</label>
+        <select id="assigned-to" name="assigned-to">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+
+
+        <label for="shortdescription">Short Description:</label>
+        <textarea id="shortdescription" name="shortdescription" placeholder="Enter a short ticket description"></textarea>
+
+        <label for="longdescription">Long Description:</label>
+        <textarea id="longdescription" name="longdescription" placeholder="Enter a long ticket description"></textarea>
+
+        <label for="priority">Priority:</label>
+        <select id="priority" name="priority">
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+        </select>
+
+        <label for="status">Status Key:</label>
+        <textarea id="status" name="status" placeholder="Enter Status Key"></textarea>
+
+        <label for="date">Select a date:</label>
+        <input type="date" id="date" name="date">
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
