@@ -234,7 +234,8 @@
             <div class="card shadow mb-6">
                 <div class="card-body">
                     <p>
-                        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" 
+                                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
                                         Data="@PageModel.Top10Tickets" TItem="TicketEntity" LogicalFilterOperator="LogicalFilterOperator.Or" >
                             <Columns>
                                 <RadzenDataGridColumn TItem="TicketEntity" Property="TicketKey" Title="ID" TextAlign="TextAlign.Center" />
@@ -266,7 +267,7 @@
 
                     <p>
                         <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                                        Data="@PageModel.ComingDueTickets" TItem="TicketEntity" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                        Data="@PageModel.PastComingDueTickets" TItem="TicketEntity" LogicalFilterOperator="LogicalFilterOperator.Or">
                             <Columns>
                                 <RadzenDataGridColumn TItem="TicketEntity" Property="TicketKey" Title="ID" TextAlign="TextAlign.Center" />
                                 <RadzenDataGridColumn TItem="TicketEntity" Property="ShortDescription" Title="Description" />

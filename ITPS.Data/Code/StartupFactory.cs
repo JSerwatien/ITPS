@@ -19,7 +19,7 @@ namespace ITPS.Data.Code
             try
             {
                 ds = DataFactory.GetDataSet(strSQL, "StartUpData");
-                returnData.Statuses = LoadStatuses(ds.Tables[0]);
+                returnData.Statuses = StatusFactory.LoadStatuses(ds.Tables[0]);
                 returnData.Departments = LoadDepartments(ds.Tables[1]);
                 returnData.Users = LoadUsers(ds.Tables[2]);
             }
@@ -40,6 +40,7 @@ namespace ITPS.Data.Code
                     UserEntity newItem = new();
                     newItem.FirstName = newRow["FirstName"].ToString();
                     newItem.LastName = newRow["LastName"].ToString();
+                    newItem.DisplayName = newItem.FirstName + " " + newItem.LastName;
                     newItem.UserName = newRow["UserName"].ToString();
                     newItem.Password = newRow["Password"].ToString();
                     newItem.EmailAddress = newRow["EmailAddress"].ToString();
@@ -81,26 +82,6 @@ namespace ITPS.Data.Code
             }
         }
 
-        private static List<StatusEntity> LoadStatuses(DataTable dataTable)
-        {
-            List<StatusEntity> returnData = new();
-            try
-            {
-                foreach(DataRow newRow in dataTable.Rows)
-                {
-                    StatusEntity newItem = new();
-                    newItem.Status = newRow["Description"].ToString();
-                    newItem.StatusCode = newRow["StatusCode"].ToString();
-                    newItem.StatusCodeKey = Convert.ToInt32(newRow["StatusKey"]);
-                    newItem.ClosedInd = newRow["ClosedInd"].ToString() =="1";
-                    returnData.Add(newItem);
-                }
-                return returnData;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("There was an error loading the statuses: " + ex.Message);
-            }
-        }
+
     }
 }

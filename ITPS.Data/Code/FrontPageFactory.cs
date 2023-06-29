@@ -24,14 +24,13 @@ namespace ITPS.Data.Code
                 returnData.UnassignedTicketCount = LoadUnassignedTicketCount(ds.Tables[0]);
                 returnData.HistoricalCountClosed = LoadHistoricalCountClosed(ds.Tables[0]); //CHANGED FRONTPAGEDATAENTITY FIELD NAME- REFERENCED ANYWHERE ELSE?
                 returnData.HistoricalCountOpen = LoadHistoricalCountOpen(ds.Tables[0]);
-                returnData.NeedingMyAttentionCount = LoadNeedingMyAttentionCount(ds.Tables[0);
+                returnData.NeedingMyAttentionCount = LoadNeedingMyAttentionCount(ds.Tables[0]);
                 returnData.PastDueCount = LoadPastDueCount(ds.Tables[0]); 
                 returnData.ClosedVsOpen = LoadClosedVsOpen(ds.Tables[0]);
-                returnData.Top10Tickets = LoadTop10Tickets(ds.Tables[8]);
-                returnData.PastDueTickets = LoadPastDueTickets(ds.Tables[1]);
-                returnData.ComingDueTickets = LoadComingDueTickets(ds.Tables[1]);
-                returnData.OpenMonthlyCount = LoadOpenMonthlyCount(ds.Tables[1]);
-                returnData.ClosedMonthlyCount = LoadClosedMonthlyCount(ds.Tables[1]);
+                returnData.Top10Tickets = LoadTop10Tickets(ds.Tables[1]);
+                returnData.PastComingDueTickets = LoadPastDueTickets(ds.Tables[2]);
+                if (ds.Tables.Count > 3) { returnData.OpenMonthlyCount = LoadOpenMonthlyCount(ds.Tables[3]); }
+                if (ds.Tables.Count > 4) { returnData.ClosedMonthlyCount = LoadClosedMonthlyCount(ds.Tables[4]); }
             }
             catch (Exception ex)
             {
@@ -59,7 +58,7 @@ namespace ITPS.Data.Code
             int returnData;
             try
             {
-                returnData = Convert.ToInt32(dataTable.Rows[0]["DepartmentCount"]); //IN STORED PROCEDURE??
+                returnData = Convert.ToInt32(dataTable.Rows[0]["DepartmentCount"]); 
             }
             catch (Exception ex)
             {
@@ -114,7 +113,7 @@ namespace ITPS.Data.Code
             int returnData;
             try
             {
-                returnData = Convert.ToInt32(dataTable.Rows[0]["NeedingAttention"]); //IN STORED PROCEDURE??
+                returnData = Convert.ToInt32(dataTable.Rows[0]["PastDue"]); 
             }
             catch (Exception ex)
             {
@@ -157,9 +156,7 @@ namespace ITPS.Data.Code
             {
                 foreach(DataRow row in dataTable.Rows)
                 {
-                    TicketEntity newTicket = new();
-                    //TICKET ENTITY?
-                    returnData.Add(newTicket);
+                    returnData.Add(TicketFactory.LoadSummaryTicketFromDataRow(row));
                 }
                 return returnData;   
             }
@@ -175,9 +172,7 @@ namespace ITPS.Data.Code
             {
                 foreach (DataRow row in dataTable.Rows)
                 {
-                    TicketEntity newTicket = new();
-                    //TICKET ENTITY?
-                    returnData.Add(newTicket);
+                    returnData.Add(TicketFactory.LoadSummaryTicketFromDataRow(row));
                 }
                 return returnData;
             }
@@ -187,24 +182,6 @@ namespace ITPS.Data.Code
             }
         }
 
-        private static List<TicketEntity> LoadComingDueTickets(DataTable dataTable)
-        {
-            List<TicketEntity> returnData = new();
-            try
-            {
-                foreach (DataRow row in dataTable.Rows)
-                {
-                    TicketEntity newTicket = new();
-                    //TICKET ENTITY?
-                    returnData.Add(newTicket);
-                }
-                return returnData;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error loading: " + ex.Message);
-            }
-        }
 
         private static List<TicketEntity> LoadOpenMonthlyCount(DataTable dataTable)
         {

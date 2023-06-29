@@ -1,0 +1,104 @@
+﻿@page "/Ticket"
+@page "/Ticket/{TicketKey}"
+@using Radzen
+@using ITPS.Data.Code;
+<div class="container-fluid" style="width:1500px !important; margin-left:-225px">
+    <div class="row">
+        <div class="col-md-6">
+            <RadzenCard>
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Priority</RadzenText>
+                <RadzenNumeric TValue=int class="form-control" @bind-Value=@PageModel.Priority Min="0" Max="99" />
+            </RadzenCard>
+            <RadzenCard>
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Short Description</RadzenText>
+                <RadzenTextBox Placeholder="Short Description..." class="form-control" @bind-Value=@PageModel.ShortDescription />
+            </RadzenCard>
+            <RadzenCard>
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Description</RadzenText>
+                <RadzenTextArea Placeholder="Description..." class="form-control" @bind-Value=@PageModel.LongDescription />
+            </RadzenCard>
+            <RadzenCard>
+                @if (PageModel.StatusHistory != null)
+                {
+                    <table class="table table-hover table-striped">
+                        <tr>
+                            <th style="width:30%">Old Status</th>
+                            <th style="width:30%">New Status</th>
+                            <th style="width:25%">Updated By</th>
+                            <th style="width:15%">Updated On</th>
+                        </tr>
+                        @foreach (StatusHistoryEntity newItem in PageModel.StatusHistory)
+                        {
+                            <tr>
+                                <td>@newItem.OldStatus</td>
+                                <td>@newItem.NewStatus</td>
+                                <td>@newItem.UpdatedBy</td>
+                                <td>@newItem.DateOfStatus.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        }
+                    </table>
+
+                }
+            </RadzenCard>
+        </div>
+        <div class="col-md-6">
+            <RadzenCard>
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Due Date:</RadzenText>
+                <RadzenDatePicker @bind-Value=PageModel.DueDate ShowTime=false Style="width:100%" DateFormat="yyyy-MM-dd" />
+            </RadzenCard>
+            <RadzenCard>
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Assigned To:</RadzenText>
+                <RadzenDropDown TValue="int" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
+                                Data=@AppState.CurrentUser.StartupObjects.Users TextProperty="DisplayName" ValueProperty="UserProfileKey" @bind-Value=PageModel.AssignedToUserProfileKey class="form-control" />
+            </RadzenCard>
+            <RadzenCard>
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Status:</RadzenText>
+                <RadzenDropDown TValue="int" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
+                                Data=@AppState.CurrentUser.StartupObjects.Statuses TextProperty="Status" ValueProperty="StatusCodeKey" @bind-Value=PageModel.StatusKey class="form-control" />
+            </RadzenCard>
+            <RadzenCard>
+                @if (PageModel.NoteList != null)
+                {
+                    <table class="table table-hover table-striped">
+                        <tr>
+                            <th style="width:5%">ID</th>
+                            <th style="width:75%">Note</th>
+                            <th style="width:10%">Created By</th>
+                            <th style="width:10%">Created On</th>
+                        </tr>
+                        @foreach (TicketNoteEntity newItem in PageModel.NoteList)
+                        {
+                            <tr>
+                                <td>@newItem.TicketNoteKey</td>
+                                <td>@newItem.Note</td>
+                                <td>@newItem.NoteEnteredBy</td>
+                                <td>@newItem.CreatedDateTime.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        }
+                    </table>
+
+                }
+            </RadzenCard>
+        </div>
+    </div>
+    <input type="submit" value="Submit">
+</div>
+@code {
+    [Parameter]
+    public string TicketKey { get; set; }
+    [CascadingParameter]
+    public CascadingAppState AppState { get; set; }
+    private TicketEntity PageModel = new();
+    protected override void OnInitialized()
+    {
+        if (ITPS.Data.Code.LocalFunctions.IsNumeric(TicketKey))
+        {
+            ReloadModel();
+        }
+    }
+    private void ReloadModel()
+    {
+        PageModel = ITPS.Data.Code.TicketFactory.LoadTicket(Convert.ToInt32(TicketKey));
+    }
+
+}

@@ -15,6 +15,7 @@
         public DateTime CreatedDateTime { get; set; }
         public bool ActiveInd { get; set; }
         public string ErrorMessage { get; set; }
+        public string DisplayName { get; set; }
         public StartUpObjectEntity StartupObjects { get; set; }
     }
 }

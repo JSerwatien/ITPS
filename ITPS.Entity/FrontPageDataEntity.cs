@@ -19,8 +19,7 @@ namespace ITPS.Entity
         public int PastDueCount { get; set; }
         public int ClosedVsOpen { get; set; }
         public List<TicketEntity> Top10Tickets { get; set; }
-        public List<TicketEntity> PastDueTickets { get; set; }
-        public List<TicketEntity> ComingDueTickets { get; set; }
+        public List<TicketEntity> PastComingDueTickets { get; set; }
         public List<TicketEntity> OpenMonthlyCount { get; set; }
         public List<TicketEntity> ClosedMonthlyCount { get; set; }
         public Exception ErrorObject { get; set; }

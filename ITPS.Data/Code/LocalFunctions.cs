@@ -13,5 +13,10 @@ namespace ITPS.Data.Code
             if (!string.IsNullOrEmpty(theValue)) { theValue = theValue.Replace("'", "''"); }
             return theValue;
         }
+        public static bool IsNumeric(string s)
+        {
+            float output;
+            return float.TryParse(s, out output);
+        }
     }
 }
