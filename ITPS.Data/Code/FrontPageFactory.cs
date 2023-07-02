@@ -22,7 +22,7 @@ namespace ITPS.Data.Code
                 returnData.OpenTicketsCount = LoadOpenTickets(ds.Tables[0]);
                 returnData.DepartmentTicketsCount = LoadDepartmentTicketsCount(ds.Tables[0]);
                 returnData.UnassignedTicketCount = LoadUnassignedTicketCount(ds.Tables[0]);
-                returnData.HistoricalCountClosed = LoadHistoricalCountClosed(ds.Tables[0]); //CHANGED FRONTPAGEDATAENTITY FIELD NAME- REFERENCED ANYWHERE ELSE?
+                returnData.HistoricalCountClosed = LoadHistoricalCountClosed(ds.Tables[0]); 
                 returnData.HistoricalCountOpen = LoadHistoricalCountOpen(ds.Tables[0]);
                 returnData.NeedingMyAttentionCount = LoadNeedingMyAttentionCount(ds.Tables[0]);
                 returnData.PastDueCount = LoadPastDueCount(ds.Tables[0]); 
@@ -183,16 +183,16 @@ namespace ITPS.Data.Code
         }
 
 
-        private static List<TicketEntity> LoadOpenMonthlyCount(DataTable dataTable)
+        private static List<MonthEntity> LoadOpenMonthlyCount(DataTable dataTable)
         {
-            List<TicketEntity> returnData = new();
+            List<MonthEntity> returnData = new();
             try
             {
                 foreach (DataRow row in dataTable.Rows)
                 {
-                    TicketEntity newTicket = new();
-                    //TICKET ENTITY?
-                    returnData.Add(newTicket);
+                    MonthEntity newMonth = new MonthEntity();
+                    newMonth.MonthName = row["TheMonth"].ToString();
+                    newMonth.Count = Convert.ToInt32(row["C"]);
                 }
                 return returnData;
             }
@@ -202,16 +202,17 @@ namespace ITPS.Data.Code
             }
         }
 
-        private static List<TicketEntity> LoadClosedMonthlyCount(DataTable dataTable)
+        private static List<MonthEntity> LoadClosedMonthlyCount(DataTable dataTable)
         {
-            List<TicketEntity> returnData = new();
+            List<MonthEntity> returnData = new();
             try
             {
                 foreach (DataRow row in dataTable.Rows)
                 {
-                    TicketEntity newTicket = new();
-                    //TICKET ENTITY?
-                    returnData.Add(newTicket);
+                    MonthEntity newMonth = new MonthEntity();
+                    newMonth.MonthName = row["TheMonth"].ToString();
+                    newMonth.Count = Convert.ToInt32(row["C"]);
+                    returnData.Add(newMonth);
                 }
                 return returnData;
             }

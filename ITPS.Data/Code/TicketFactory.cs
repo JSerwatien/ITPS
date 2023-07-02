@@ -14,7 +14,28 @@ namespace ITPS.Data.Code
     {
         public static TicketEntity LoadSummaryTicketFromDataRow(DataRow theData)
         {
-            return new TicketEntity();
+            TicketEntity returnData = new TicketEntity();
+            try
+            {
+                returnData.TicketKey = Convert.ToInt32(theData["Ticketkey"]);
+                returnData.AssignedToUserProfileKey = Convert.ToInt32(theData["AssignedToUserProfileKey"]);
+                returnData.ShortDescription = theData["ShortDescription"].ToString();
+                returnData.LongDescription = theData["LongDescription"].ToString();
+                returnData.Priority = Convert.ToInt32(theData["Priority"]);
+                returnData.StatusKey = Convert.ToInt32(theData["StatusKey"]);
+                returnData.DueDate = Convert.ToDateTime(theData["DueDate"]);
+                returnData.CreatedDateTime = Convert.ToDateTime(theData["CreatedDateTime"]);
+                returnData.LastUpdatedDateTime = Convert.ToDateTime(theData["LastUpdatedDateTime"]);
+                returnData.CreatedBy = theData["CreatedBy"].ToString();
+                returnData.LastUpdatedBy = theData["LastUpdatedBy"].ToString();
+                //NEED TO ADD THE LAST TWO COLUMNS : STATUS AND STATUS CODE HOWEVER NOT IN TICKET ENTITY
+            }
+            catch (Exception ex)
+            {
+                returnData.ErrorObject = ex;
+            }
+           
+            return returnData;
         }
         public static TicketEntity LoadTicket(int ticketKey)
         {
@@ -53,6 +74,7 @@ namespace ITPS.Data.Code
                 returnData.LastUpdatedDateTime = Convert.ToDateTime(newRow["LastUpdatedDateTime"]);
                 returnData.CreatedBy = newRow["CreatedBy"].ToString();
                 returnData.LastUpdatedBy = newRow["LastUpdatedBy"].ToString();
+
             }
             catch (Exception ex)
             {
