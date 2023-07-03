@@ -10,7 +10,7 @@ namespace ITPS.Data.Code
 {
     public class NotesFactory
     {
-        public static List<TicketNoteEntity> LoadNotes(DataTable theData)
+        public static TicketNoteEntity LoadNotes(DataTable theData)
         {
             DataSet ds = new();
             TicketNoteEntity returnData = new TicketNoteEntity();
@@ -37,7 +37,7 @@ namespace ITPS.Data.Code
             string returnData;
             try
             {
-                returnData = Convert.ToString(dataTable.Rows[0]["Note"]);
+                returnData =dataTable.Rows[0]["Note"].toString();
             }
             catch (Exception ex)
             {
@@ -66,7 +66,7 @@ namespace ITPS.Data.Code
             DateTime returnData;
             try
             {
-                returnData = Convert.ToDateTime(dataTable.Rows[0]["CreatedDateTime"]);
+                returnData = Convert.ToDateTime(dataTable.Rows[0]["CreatedDateTime"]);//can u convert to datetime this way
             }
             catch (Exception ex)
             {
@@ -75,7 +75,7 @@ namespace ITPS.Data.Code
             return returnData;
         }
 
-        private static int UserProfileKey(DataTable dataTable)
+        private static int LoadUserProfileKey(DataTable dataTable)
         {
             int returnData;
             try
