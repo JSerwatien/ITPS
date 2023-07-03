@@ -13,11 +13,14 @@ namespace ITPS.Entity
     {
         public int TicketKey { get; set; }
         public int AssignedToUserProfileKey { get; set; }
+        public string AssignedToDisplayName { get; set; }
         public int UserProfileKey { get; set; }
         public string ShortDescription { get; set; }
         public string LongDescription { get; set; }
         public int Priority { get; set; }
         public int StatusKey { get; set; }
+        public string Status { get; set; }
+        public string StatusCode { get; set; }
         public DateTime DueDate { get; set; }
         public DateTime CreatedDateTime { get; set; }
         public string CreatedBy { get; set; }
@@ -26,5 +29,6 @@ namespace ITPS.Entity
         public List<StatusHistoryEntity> StatusHistory { get; set; }
         public List<TicketNoteEntity> NoteList { get; set; }
         public Exception ErrorObject { get; set; }
+        public string PageMessage { get; set; }
     }
 }

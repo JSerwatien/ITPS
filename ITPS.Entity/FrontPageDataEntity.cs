@@ -23,5 +23,6 @@ namespace ITPS.Entity
         public List<MonthEntity> OpenMonthlyCount { get; set; }
         public List<MonthEntity> ClosedMonthlyCount { get; set; }
         public Exception ErrorObject { get; set; }
+        public string PageMessage { get; set; }
     }
 }

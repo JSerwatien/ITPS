@@ -3,24 +3,37 @@
 @using Radzen
 @using ITPS.Data.Code;
 <div class="container-fluid" style="width:1500px !important; margin-left:-225px">
+    @if (!string.IsNullOrEmpty(PageModel?.PageMessage))
+    {
+        <div class="alert alert-success" role="alert">
+            @PageModel.PageMessage
+        </div>
+    }
+    @if (PageModel?.ErrorObject != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @PageModel.ErrorObject.Message
+        </div>
+    }
+    <h1>Ticket ID: @GetTicketIDForDisplay()</h1>
+    
     <div class="row">
         <div class="col-md-6">
+            <h2>Description:</h2>
             <RadzenCard>
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Priority</RadzenText>
                 <RadzenNumeric TValue=int class="form-control" @bind-Value=@PageModel.Priority Min="0" Max="99" />
-            </RadzenCard>
-            <RadzenCard>
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Short Description</RadzenText>
                 <RadzenTextBox Placeholder="Short Description..." class="form-control" @bind-Value=@PageModel.ShortDescription />
-            </RadzenCard>
-            <RadzenCard>
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Description</RadzenText>
                 <RadzenTextArea Placeholder="Description..." class="form-control" @bind-Value=@PageModel.LongDescription />
             </RadzenCard>
+            <br />
+            <h2>Status History:</h2>
             <RadzenCard>
                 @if (PageModel.StatusHistory != null)
                 {
-                    <table class="table table-hover table-striped">
+                    <table class="table table-hover table-striped" style="font-size:8pt; font-family:verdana">
                         <tr>
                             <th style="width:30%">Old Status</th>
                             <th style="width:30%">New Status</th>
@@ -37,29 +50,31 @@
                             </tr>
                         }
                     </table>
-
                 }
             </RadzenCard>
         </div>
         <div class="col-md-6">
+            <h2>Status:</h2>
             <RadzenCard>
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Due Date:</RadzenText>
                 <RadzenDatePicker @bind-Value=PageModel.DueDate ShowTime=false Style="width:100%" DateFormat="yyyy-MM-dd" />
-            </RadzenCard>
-            <RadzenCard>
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Assigned To:</RadzenText>
                 <RadzenDropDown TValue="int" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
                                 Data=@AppState.CurrentUser.StartupObjects.Users TextProperty="DisplayName" ValueProperty="UserProfileKey" @bind-Value=PageModel.AssignedToUserProfileKey class="form-control" />
-            </RadzenCard>
-            <RadzenCard>
-                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Status:</RadzenText>
-                <RadzenDropDown TValue="int" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
+                @if(PageModel.TicketKey>0)
+                {
+                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Status:</RadzenText>
+                    <RadzenDropDown TValue="int" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
                                 Data=@AppState.CurrentUser.StartupObjects.Statuses TextProperty="Status" ValueProperty="StatusCodeKey" @bind-Value=PageModel.StatusKey class="form-control" />
+                }
             </RadzenCard>
+            <RadzenButton Text="Save" Icon="save" ButtonStyle="ButtonStyle.Success" Style="float:right" Click="() => SaveTicket()"></RadzenButton>
+            <br />
+            <h2>Notes:</h2>
             <RadzenCard>
                 @if (PageModel.NoteList != null)
                 {
-                    <table class="table table-hover table-striped">
+                    <table class="table table-hover table-striped" style="font-size:8pt; font-family:verdana">
                         <tr>
                             <th style="width:5%">ID</th>
                             <th style="width:75%">Note</th>
@@ -79,9 +94,10 @@
 
                 }
             </RadzenCard>
+            <RadzenButton Text="Add New Note" Icon="save" ButtonStyle="ButtonStyle.Success" Style="float:right" Click="() => SaveTicket()"></RadzenButton>
+
         </div>
     </div>
-    <input type="submit" value="Submit">
 </div>
 @code {
     [Parameter]
@@ -96,9 +112,47 @@
             ReloadModel();
         }
     }
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        ReloadModel();
+    }
     private void ReloadModel()
     {
-        PageModel = ITPS.Data.Code.TicketFactory.LoadTicket(Convert.ToInt32(TicketKey));
+        if (Convert.ToInt32(TicketKey) > 0)
+        { PageModel = ITPS.Data.Code.TicketFactory.LoadTicket(Convert.ToInt32(TicketKey)); }
+        else
+        { PageModel = new(); }
     }
-
+    private string GetTicketIDForDisplay()
+    {
+        return PageModel.TicketKey == 0 ? "UNSAVED" : PageModel.TicketKey.ToString();
+    }
+    private void SaveTicket()
+    {
+        ValidateEntry();
+        if(PageModel.ErrorObject==null)
+        {
+            PageModel = TicketFactory.SaveTicket(PageModel, AppState.CurrentUser);
+            if(PageModel.ErrorObject==null)
+            { PageModel.PageMessage = "Your ticket was saved successfully!"; }
+        }
+    }
+    private void ValidateEntry()
+    {
+        PageModel.ErrorObject = null;
+        if(PageModel.Priority==0){ PageModel.Priority = 99; }
+        if(string.IsNullOrEmpty(PageModel.ShortDescription))
+        { PageModel.ErrorObject = new Exception("The Short Description field is required"); return; }
+        if (string.IsNullOrEmpty(PageModel.LongDescription))
+        { PageModel.ErrorObject = new Exception("The Long Description field is required"); return; }
+        if (PageModel.DueDate < DateTime.Now && !StatusIsClosed())
+        { PageModel.ErrorObject = new Exception("Invalid Due Date"); return; }
+    }
+    private bool StatusIsClosed()
+    {
+        var statusItem = AppState.CurrentUser.StartupObjects.Statuses.Where(x => x.StatusCodeKey == PageModel.StatusKey).FirstOrDefault();
+        if(statusItem==null){ return false; }
+        else { return statusItem.ClosedInd; }
+    }
 }

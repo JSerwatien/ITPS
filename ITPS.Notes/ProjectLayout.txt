@@ -156,18 +156,15 @@ DB Rules:
 
 
 	Current HW:
-	1)	Front Page entity:
-		a)	Create a month comparison entity:
-			Month name
-			Month int
-			Count
-		b)	Finish load function from TicketFactory
+	1)	Ability to add new note
+	2)	Top search bar functionality
 
-	2)	Finish NotesFactory.LoadNotes
-	3)	Create ticket INSERT/UPDATE SP
+	3)	Charts for front page
+	4)	Ticket Prioritization page
+	5)	Calendar page
+	6)	Fixed New Ticket link from existing ticket page
+
 	
-	5)	Clean up Status History and Notes grids on Entry Page
-	6)	Display error on Entry Page
 
 
 	Thursday:

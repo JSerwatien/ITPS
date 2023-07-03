@@ -10,24 +10,26 @@ namespace ITPS.Data.Code
 {
     public class NotesFactory
     {
-        public static TicketNoteEntity LoadNotes(DataTable theData)
+        public static List<TicketNoteEntity> LoadNotes(DataTable theData)
         {
             DataSet ds = new();
-            TicketNoteEntity returnData = new TicketNoteEntity();
-            string strSQL = "EXEC dbo.Ticket_SEL";
+            List<TicketNoteEntity> returnData = new();
 
-             try
+            try
             {
-                ds = DataFactory.GetDataSet(strSQL, "Notes"); //HAVE TO ENTER TABLE NAME? 
-                returnData.Note = LoadNote(ds.Tables[0]);
-                returnData.TicketNoteKey = LoadTicketNoteKey(ds.Tables[0]);
-                returnData.CreatedDateTime = LoadCreatedDateTime(ds.Tables[0]);
-                returnData.UserProfileKey = LoadUserProfileKey(ds.Tables[0]); 
-                returnData.NoteEnteredBy = LoadNoteEnteredBy(ds.Tables[0]);
-              }
+                foreach(DataRow newRow in theData.Rows)
+                {
+                    TicketNoteEntity newItem = new();
+                    newItem.TicketNoteKey = LoadTicketNoteKey(newRow);
+                    newItem.CreatedDateTime = LoadCreatedDateTime(newRow);
+                    newItem.NoteEnteredBy = LoadNoteEnteredBy(newRow);
+                    newItem.Note = newRow["Note"].ToString();
+                    returnData.Add(newItem);
+                }
+            }
             catch (Exception ex)
             {
-                returnData.ErrorObject = ex;
+                throw ex;
             }
             return returnData;
         }
@@ -37,7 +39,7 @@ namespace ITPS.Data.Code
             string returnData;
             try
             {
-                returnData =dataTable.Rows[0]["Note"].toString();
+                returnData = dataTable.Rows[0]["Note"].ToString();
             }
             catch (Exception ex)
             {
@@ -46,12 +48,12 @@ namespace ITPS.Data.Code
             return returnData;
         }
 
-        private static int LoadTicketNoteKey(DataTable dataTable)
+        private static int LoadTicketNoteKey(DataRow newRow)
         {
             int returnData;
             try
             {
-                returnData = Convert.ToInt32(dataTable.Rows[0]["TicketNoteKey"]);
+                returnData = Convert.ToInt32(newRow["NoteKey"]);
             }
             catch (Exception ex)
             {
@@ -61,12 +63,12 @@ namespace ITPS.Data.Code
         }
 
 
-        private static int LoadCreatedDateTime(DataTable dataTable)
+        private static DateTime LoadCreatedDateTime(DataRow newRow)
         {
             DateTime returnData;
             try
             {
-                returnData = Convert.ToDateTime(dataTable.Rows[0]["CreatedDateTime"]);//can u convert to datetime this way
+                returnData = Convert.ToDateTime(newRow["CreatedDateTime"]);//can u convert to datetime this way
             }
             catch (Exception ex)
             {
@@ -75,12 +77,12 @@ namespace ITPS.Data.Code
             return returnData;
         }
 
-        private static int LoadUserProfileKey(DataTable dataTable)
+        private static int LoadUserProfileKey(DataRow newRow)
         {
             int returnData;
             try
             {
-                returnData = Convert.ToInt32(dataTable.Rows[0]["UserProfileKey"]);
+                returnData = Convert.ToInt32(newRow["UserProfileKey"]);
             }
             catch (Exception ex)
             {
@@ -89,12 +91,12 @@ namespace ITPS.Data.Code
             return returnData;
         }
 
-        private static string LoadNoteEnteredBy(DataTable dataTable)
+        private static string LoadNoteEnteredBy(DataRow newRow)
         {
             string returnData;
             try
             {
-                returnData = Convert.ToString(dataTable.Rows[0]["NoteEnteredBy"]);
+                returnData = Convert.ToString(newRow["CreatedBy"]);
             }
             catch (Exception ex)
             {
@@ -102,6 +104,5 @@ namespace ITPS.Data.Code
             }
             return returnData;
         }
-    }
     }
 }

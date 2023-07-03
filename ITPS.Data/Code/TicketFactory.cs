@@ -1,4 +1,5 @@
 ﻿using ITPS.Entity;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -28,6 +29,9 @@ namespace ITPS.Data.Code
                 returnData.LastUpdatedDateTime = Convert.ToDateTime(theData["LastUpdatedDateTime"]);
                 returnData.CreatedBy = theData["CreatedBy"].ToString();
                 returnData.LastUpdatedBy = theData["LastUpdatedBy"].ToString();
+                returnData.Status = theData["Status"].ToString();
+                returnData.AssignedToDisplayName = theData["AssignedToFirstName"].ToString() + " " + theData["AssignedToLastName"].ToString();
+                returnData.StatusCode = theData["StatusCode"].ToString();
                 //NEED TO ADD THE LAST TWO COLUMNS : STATUS AND STATUS CODE HOWEVER NOT IN TICKET ENTITY
             }
             catch (Exception ex)
@@ -71,7 +75,7 @@ namespace ITPS.Data.Code
                 returnData.StatusKey = Convert.ToInt32(newRow["StatusKey"]);
                 returnData.DueDate = Convert.ToDateTime(newRow["DueDate"]);
                 returnData.CreatedDateTime = Convert.ToDateTime(newRow["CreatedDateTime"]);
-                returnData.LastUpdatedDateTime = Convert.ToDateTime(newRow["LastUpdatedDateTime"]);
+                if (newRow["LastUpdatedDateTime"] != System.DBNull.Value) { returnData.LastUpdatedDateTime = Convert.ToDateTime(newRow["LastUpdatedDateTime"]); }
                 returnData.CreatedBy = newRow["CreatedBy"].ToString();
                 returnData.LastUpdatedBy = newRow["LastUpdatedBy"].ToString();
 
@@ -80,6 +84,32 @@ namespace ITPS.Data.Code
             {
                 returnData.ErrorObject=ex;
             }
+            return returnData;
+        }
+        public static TicketEntity SaveTicket(TicketEntity theTicket, UserEntity currentUser)
+        {
+            DataSet ds = new();
+            string strSQL = GetSaveSQL(theTicket, currentUser);
+            try
+            {
+                ds = DataFactory.GetDataSet(strSQL, "SaveTicket");
+                theTicket.TicketKey = Convert.ToInt32(ds.Tables[0].Rows[0][0]);
+                theTicket= LoadTicket(theTicket.TicketKey);
+            }
+            catch (Exception ex)
+            {
+                theTicket.ErrorObject=ex;
+            }
+            return theTicket;
+        }
+
+        private static string GetSaveSQL(TicketEntity theTicket, UserEntity currentUser)
+        {
+            string returnData = "EXEC dbo.Ticket_UPTINS {0}, {1},{2},'{3}', '{4}', {5},{6},'{7}', '{8}'";
+            var openStatus = currentUser.StartupObjects.Statuses.Where(x => x.StatusCode == "OPEN").FirstOrDefault();
+            returnData = string.Format(returnData, theTicket.TicketKey, theTicket.UserProfileKey == 0 ? currentUser.UserProfileKey : theTicket.UserProfileKey,
+                    theTicket.AssignedToUserProfileKey, theTicket.ShortDescription.Replace("'", "''"), theTicket.LongDescription.Replace("'", "''"),
+                    theTicket.Priority, theTicket.StatusKey == 0 ? openStatus.StatusCodeKey : theTicket.StatusKey, theTicket.DueDate, currentUser.UserName);
             return returnData;
         }
     }

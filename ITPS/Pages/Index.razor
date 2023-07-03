@@ -5,7 +5,18 @@
 
 <!-- Begin Page Content -->
 <div class="container-fluid" style="width:1500px !important; margin-left:-225px">
-
+    @if (!string.IsNullOrEmpty(PageModel?.PageMessage))
+    {
+        <div class="alert alert-success" role="alert">
+            @PageModel.PageMessage
+        </div>
+    }
+    @if (PageModel?.ErrorObject != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @PageModel.ErrorObject.Message
+        </div>
+    }
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         @if (!string.IsNullOrEmpty(AppState.CurrentUser?.ErrorMessage))
@@ -238,17 +249,15 @@
                                         AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
                                         Data="@PageModel.Top10Tickets" TItem="TicketEntity" LogicalFilterOperator="LogicalFilterOperator.Or" >
                             <Columns>
-                                <RadzenDataGridColumn TItem="TicketEntity" Property="TicketKey" Title="ID" TextAlign="TextAlign.Center" />
+                                <RadzenDataGridColumn TItem="TicketEntity" Title="ID" TextAlign="TextAlign.Center">
+                                    <Template Context="TheData">
+                                        <a href="/ticket/@TheData.TicketKey">@TheData.TicketKey</a>
+                                    </Template>
+                                </RadzenDataGridColumn>
                                 <RadzenDataGridColumn TItem="TicketEntity" Property="ShortDescription" Title="Description" />
                                 <RadzenDataGridColumn TItem="TicketEntity" Property="AssignedToDisplayName" Title="Assigned To" />
                                 <RadzenDataGridColumn TItem="TicketEntity" Property="DueDate" Title="Due Date" FormatString="{0:d}" />
                                 <RadzenDataGridColumn TItem="TicketEntity" Property="Status" Title="Status" />
-                                <RadzenDataGridColumn TItem="TicketEntity" Property="Region" Title="Region" />
-                                <RadzenDataGridColumn TItem="TicketEntity" Title="Notes" TextAlign="TextAlign.Center">
-                                    <Template Context="TheData">
-                                        @TheData.NoteList.Count()
-                                    </Template>
-                                </RadzenDataGridColumn>
                             </Columns>
                         </RadzenDataGrid>
                     </p>
@@ -269,17 +278,15 @@
                         <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
                                         Data="@PageModel.PastComingDueTickets" TItem="TicketEntity" LogicalFilterOperator="LogicalFilterOperator.Or">
                             <Columns>
-                                <RadzenDataGridColumn TItem="TicketEntity" Property="TicketKey" Title="ID" TextAlign="TextAlign.Center" />
+                                <RadzenDataGridColumn TItem="TicketEntity" Title="ID" TextAlign="TextAlign.Center">
+                                    <Template Context="TheData">
+                                        <a href="/ticket/@TheData.TicketKey">@TheData.TicketKey</a>
+                                    </Template>
+                                </RadzenDataGridColumn>
                                 <RadzenDataGridColumn TItem="TicketEntity" Property="ShortDescription" Title="Description" />
                                 <RadzenDataGridColumn TItem="TicketEntity" Property="AssignedToDisplayName" Title="Assigned To" />
                                 <RadzenDataGridColumn TItem="TicketEntity" Property="DueDate" Title="Due Date" FormatString="{0:d}" />
                                 <RadzenDataGridColumn TItem="TicketEntity" Property="Status" Title="Status" />
-                                <RadzenDataGridColumn TItem="TicketEntity" Property="Region" Title="Region" />
-                                <RadzenDataGridColumn TItem="TicketEntity" Title="Notes" TextAlign="TextAlign.Center">
-                                    <Template Context="TheData">
-                                        @TheData.NoteList.Count()
-                                    </Template>
-                                </RadzenDataGridColumn>
                             </Columns>
                         </RadzenDataGrid>
 
@@ -303,17 +310,12 @@
 
     protected override void OnInitialized()
     {
-        PopulateDummyData();
+        ReloadModel();
         StateHasChanged();
     }
-    private void PopulateDummyData()
+    private void ReloadModel()
     {
-        Random newRandom = new();
-        PageModel.OpenTicketsCount = newRandom.Next();
-        PageModel.DepartmentTicketsCount = newRandom.Next();
-        PageModel.ClosedVsOpen = newRandom.Next();
-        PageModel.NeedingMyAttentionCount = newRandom.Next();
-        PageModel.Top10Tickets = new();
+        PageModel = ITPS.Data.Code.FrontPageFactory.GetFrontPageData(AppState.CurrentUser.UserProfileKey);
     }
     private string GetUserName()
     {

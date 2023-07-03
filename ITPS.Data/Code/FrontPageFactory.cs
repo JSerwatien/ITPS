@@ -10,11 +10,11 @@ namespace ITPS.Data.Code
 {
     public class FrontPageFactory
     {
-        public static FrontPageDataEntity GetFrontPageData()
+        public static FrontPageDataEntity GetFrontPageData(int userProfileKey)
         {
             DataSet ds = new ();
             FrontPageDataEntity returnData = new FrontPageDataEntity();
-            string strSQL = "EXEC dbo.Front_Page_Data_SEL";
+            string strSQL = "EXEC dbo.Front_Page_Data_SEL " + userProfileKey;
 
             try
             {
@@ -26,7 +26,7 @@ namespace ITPS.Data.Code
                 returnData.HistoricalCountOpen = LoadHistoricalCountOpen(ds.Tables[0]);
                 returnData.NeedingMyAttentionCount = LoadNeedingMyAttentionCount(ds.Tables[0]);
                 returnData.PastDueCount = LoadPastDueCount(ds.Tables[0]); 
-                returnData.ClosedVsOpen = LoadClosedVsOpen(ds.Tables[0]);
+                returnData.ClosedVsOpen = LoadClosedVsOpen(returnData.HistoricalCountClosed, returnData.HistoricalCountOpen);
                 returnData.Top10Tickets = LoadTop10Tickets(ds.Tables[1]);
                 returnData.PastComingDueTickets = LoadPastDueTickets(ds.Tables[2]);
                 if (ds.Tables.Count > 3) { returnData.OpenMonthlyCount = LoadOpenMonthlyCount(ds.Tables[3]); }
@@ -37,6 +37,12 @@ namespace ITPS.Data.Code
                 returnData.ErrorObject = ex;
             }
             return returnData;
+        }
+
+        private static int LoadClosedVsOpen(int historicalCountClosed, int historicalCountOpen)
+        {
+            if (historicalCountClosed == 0) { return 0; }
+            return Convert.ToInt32((historicalCountClosed / historicalCountOpen) * 100);
         }
 
         private static int LoadOpenTickets(DataTable dataTable)
@@ -113,7 +119,7 @@ namespace ITPS.Data.Code
             int returnData;
             try
             {
-                returnData = Convert.ToInt32(dataTable.Rows[0]["PastDue"]); 
+                returnData = Convert.ToInt32(dataTable.Rows[0]["PastDueCount"]); 
             }
             catch (Exception ex)
             {
@@ -127,7 +133,7 @@ namespace ITPS.Data.Code
             int returnData;
             try
             {
-                returnData = Convert.ToInt32(dataTable.Rows[0]["PastDue"]); 
+                returnData = Convert.ToInt32(dataTable.Rows[0]["PastDueCount"]); 
             }
             catch (Exception ex)
             {
@@ -136,19 +142,7 @@ namespace ITPS.Data.Code
             return returnData;
         }
 
-        private static int LoadClosedVsOpen(DataTable dataTable)
-        {
-            int returnData;
-            try
-            {
-                returnData = Convert.ToInt32(dataTable.Rows[0][/*HOW TO ACCESS FROM SP??*/""]);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error loading: " + ex.Message);
-            }
-            return returnData;
-        }
+
         private static List<TicketEntity> LoadTop10Tickets(DataTable dataTable)
         {
             List<TicketEntity> returnData = new();
