@@ -1,0 +1,65 @@
+﻿@page "/NewNote/{TicketKey}"
+@inject Radzen.DialogService dialogService
+@using Radzen
+@using ITPS.Data.Code
+<div class="container-fluid">
+    @if (!string.IsNullOrEmpty(PageMessage))
+    {
+        <div class="alert alert-success" role="alert">
+            @PageMessage
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @ErrorMessage
+        </div>
+    }
+    <h1>Ticket ID: @TicketKey</h1>
+    <RadzenCard>
+        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Note:</RadzenText>
+        <RadzenTextBox Placeholder="Note..." class="form-control" @bind-Value=@PageModel.Note />
+    </RadzenCard>
+    <RadzenButton Text="Save" Icon="save" ButtonStyle="ButtonStyle.Success" Style="float:right" Click="() => SaveNote()"></RadzenButton>
+    <RadzenButton Text="Close" Icon="close" ButtonStyle="ButtonStyle.Info" Style="float:left" Click="() => ClosePage(true)"></RadzenButton>
+</div>
+@code {
+    [Parameter]
+    public string TicketKey { get; set; }
+    [CascadingParameter]
+    public ITPS.Shared.CascadingAppState AppState { get; set; }
+    private ITPS.Entity.TicketNoteEntity PageModel = new();
+    private string PageMessage = string.Empty;
+    private string ErrorMessage = string.Empty;
+    protected override void OnInitialized()
+    {
+    }
+    private void SaveNote()
+    {
+        try
+        {
+            PageMessage = string.Empty;
+            ErrorMessage = string.Empty;
+            if(!string.IsNullOrEmpty(PageModel.Note))
+            {
+                PageModel.TicketKey = Convert.ToInt32(TicketKey);
+                PageModel.NoteEnteredBy = AppState.CurrentUser.UserName;
+                ITPS.Data.Code.NotesFactory.SaveNote(PageModel);
+                PageMessage = "Your note was saved successfully!";
+                PageModel = new();
+            }
+            else
+            {
+                ErrorMessage = "You must enter a note first";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
+    private void ClosePage(bool exitCode)
+    {
+        dialogService.Close(exitCode);
+    }
+}

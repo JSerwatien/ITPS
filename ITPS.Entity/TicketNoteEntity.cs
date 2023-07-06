@@ -13,5 +13,6 @@ namespace ITPS.Entity
         public DateTime CreatedDateTime { get; set; }
         public int UserProfileKey { get; set; }
         public string NoteEnteredBy { get; set; }
+        public int TicketKey { get; set; }
     }
 }

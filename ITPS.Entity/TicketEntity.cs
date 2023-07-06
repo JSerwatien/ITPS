@@ -14,6 +14,7 @@ namespace ITPS.Entity
         public int TicketKey { get; set; }
         public int AssignedToUserProfileKey { get; set; }
         public string AssignedToDisplayName { get; set; }
+        public string TicketOwnerDisplayName { get; set; }
         public int UserProfileKey { get; set; }
         public string ShortDescription { get; set; }
         public string LongDescription { get; set; }
@@ -21,6 +22,7 @@ namespace ITPS.Entity
         public int StatusKey { get; set; }
         public string Status { get; set; }
         public string StatusCode { get; set; }
+        public bool StatusIsClosed { get; set; }
         public DateTime DueDate { get; set; }
         public DateTime CreatedDateTime { get; set; }
         public string CreatedBy { get; set; }

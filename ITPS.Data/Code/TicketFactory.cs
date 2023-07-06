@@ -49,9 +49,14 @@ namespace ITPS.Data.Code
             try
             {
                 ds = DataFactory.GetDataSet(strSQL, "TicketData");
-                returnData = LoadTicketData(ds.Tables[0]);
-                returnData.NoteList = NotesFactory.LoadNotes(ds.Tables[1]);
-                returnData.StatusHistory = StatusFactory.LoadStatusHistory(ds.Tables[2]);
+                if (ds.Tables[0].Rows.Count==0)
+                { returnData.ErrorObject = new Exception("No ticket was found for ticket ID " + ticketKey); }
+                else
+                {
+                    returnData = LoadTicketData(ds.Tables[0]);
+                    returnData.NoteList = NotesFactory.LoadNotes(ds.Tables[1]);
+                    returnData.StatusHistory = StatusFactory.LoadStatusHistory(ds.Tables[2]);
+                }
             }
             catch (Exception ex)
             {
@@ -110,6 +115,21 @@ namespace ITPS.Data.Code
             returnData = string.Format(returnData, theTicket.TicketKey, theTicket.UserProfileKey == 0 ? currentUser.UserProfileKey : theTicket.UserProfileKey,
                     theTicket.AssignedToUserProfileKey, theTicket.ShortDescription.Replace("'", "''"), theTicket.LongDescription.Replace("'", "''"),
                     theTicket.Priority, theTicket.StatusKey == 0 ? openStatus.StatusCodeKey : theTicket.StatusKey, theTicket.DueDate, currentUser.UserName);
+            return returnData;
+        }
+        public static List<TicketEntity> GetReportData()
+        {
+            List<TicketEntity> returnData = new();
+            string strSQL = "EXEC dbo.GetReportingData";
+            DataSet ds = new();
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
             return returnData;
         }
     }

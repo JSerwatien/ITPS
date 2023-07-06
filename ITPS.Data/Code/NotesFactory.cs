@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -103,6 +104,21 @@ namespace ITPS.Data.Code
                 throw new Exception("Error loading the note entered by: " + ex.Message);
             }
             return returnData;
+        }
+        public static int SaveNote(TicketNoteEntity theNote)
+        {
+            DataSet ds = new();
+            string strSQL = "EXEC dbo.TicketNote_INS '{0}', '{1}', {2}";
+            try
+            {
+                strSQL = string.Format(strSQL, theNote.Note.Replace("'", "''"), theNote.NoteEnteredBy, theNote.TicketKey);
+                ds = DataFactory.GetDataSet(strSQL, "NewNote");
+                return Convert.ToInt32(ds.Tables[0].Rows[0][0]);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

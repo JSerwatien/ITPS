@@ -156,14 +156,22 @@ DB Rules:
 
 
 	Current HW:
-	1)	Ability to add new note
-	2)	Top search bar functionality
+	1)	Finish Ticket Reporting page
+		a)	Load list of entities
+		b)	Confirm page is working as expected
+	2)	Top search bar functionality:
+		a)	If numeric, just jump to ticket
+		b)	If text:
+			i)	If one ticket has a match in short/long description, jump to ticket
+			ii)	Otherwise, display message saying X # of tickets found.  Please refine your search.
 
 	3)	Charts for front page
 	4)	Ticket Prioritization page
 	5)	Calendar page
-	6)	Fixed New Ticket link from existing ticket page
-
+	6)	Ability to remove my notes
+	7)	On error on Ticket page, disable buttons
+	8)	Ticket assignment page (for all open tickets)
+	9)	Reporting
 	
 
 

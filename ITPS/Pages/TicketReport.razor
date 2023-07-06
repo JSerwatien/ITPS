@@ -1,0 +1,89 @@
+﻿@page "/TicketReport"
+@inject Radzen.DialogService dialogService
+@using Radzen
+@using ITPS.Data.Code
+<div class="container-fluid" style="width:1500px !important; margin-left:-225px">
+    @if (!string.IsNullOrEmpty(PageMessage))
+    {
+        <div class="alert alert-success" role="alert">
+            @PageMessage
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @ErrorMessage
+        </div>
+    }
+    <div class="row">
+        <div class="col-md-6">
+            <span style="float:left">
+                Hide Closed Tickets
+                <RadzenSwitch @bind-Value=@HideClosedTickets Change=@(args => FilterData()) />
+            </span>
+        </div>
+        <div class="col-md-6">
+            <span Style="float:right">
+                Hide Assigned Tickets
+                <RadzenSwitch @bind-Value=@HideAssignedTickets Change=@(args => FilterData()) />
+            </span>
+        </div>
+    </div>
+
+        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5"
+                    AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                    Data="@PageModel" TItem="TicketEntity" LogicalFilterOperator="LogicalFilterOperator.Or">
+            <Columns>
+                <RadzenDataGridColumn TItem="TicketEntity" Title="ID" TextAlign="TextAlign.Center">
+                    <Template Context="TheData">
+                        <a href="/ticket/@TheData.TicketKey">@TheData.TicketKey</a>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="TicketEntity" Property="ShortDescription" Title="Summary" />
+                <RadzenDataGridColumn TItem="TicketEntity" Property="LongDescription" Title="Description" />
+                <RadzenDataGridColumn TItem="TicketEntity" Property="AssignedToDisplayName" Title="Assigned To" />
+                <RadzenDataGridColumn TItem="TicketEntity" Property="TicketOwnerDisplayName" Title="Owner" />
+                <RadzenDataGridColumn TItem="TicketEntity" Property="DueDate" Title="Due Date" FormatString="{0:d}" />
+                <RadzenDataGridColumn TItem="TicketEntity" Property="Status" Title="Status" />
+            </Columns>
+        </RadzenDataGrid>
+    
+</div>
+@code {
+    [CascadingParameter]
+    public CascadingAppState AppState { get; set; }
+    private List<TicketEntity> RawData = new();
+    private List<TicketEntity> PageModel = new();
+    private string PageMessage = string.Empty;
+    private string ErrorMessage = string.Empty;
+    private bool HideClosedTickets = true;
+    private bool HideAssignedTickets = false;
+    protected override void OnInitialized()
+    {
+        ReloadModel();
+    }
+    private void ReloadModel()
+    {
+        //Load Data
+        FilterData();
+    }
+    private void FilterData()
+    {
+        if(HideClosedTickets && HideAssignedTickets)
+        {
+            PageModel = RawData.Where(x => x.StatusIsClosed = false && x.AssignedToUserProfileKey > 0).ToList();
+        }
+        else if(HideClosedTickets)
+        {
+            PageModel = RawData.Where(x =>  x.StatusIsClosed = false).ToList();
+        }
+        else if (HideAssignedTickets)
+        {
+            PageModel = RawData.Where(x => x.AssignedToUserProfileKey > 0).ToList();
+        }
+        else
+        {
+            PageModel = RawData;
+        }
+    }
+}

@@ -1,7 +1,8 @@
 ﻿@page "/Ticket"
 @page "/Ticket/{TicketKey}"
+@inject Radzen.DialogService dialogService
 @using Radzen
-@using ITPS.Data.Code;
+@using ITPS.Data.Code
 <div class="container-fluid" style="width:1500px !important; margin-left:-225px">
     @if (!string.IsNullOrEmpty(PageModel?.PageMessage))
     {
@@ -40,7 +41,7 @@
                             <th style="width:25%">Updated By</th>
                             <th style="width:15%">Updated On</th>
                         </tr>
-                        @foreach (StatusHistoryEntity newItem in PageModel.StatusHistory)
+                        @foreach (StatusHistoryEntity newItem in PageModel.StatusHistory.OrderByDescending(x => x.DateOfStatus))
                         {
                             <tr>
                                 <td>@newItem.OldStatus</td>
@@ -81,7 +82,7 @@
                             <th style="width:10%">Created By</th>
                             <th style="width:10%">Created On</th>
                         </tr>
-                        @foreach (TicketNoteEntity newItem in PageModel.NoteList)
+                        @foreach (TicketNoteEntity newItem in PageModel.NoteList.OrderByDescending(x => x.CreatedDateTime))
                         {
                             <tr>
                                 <td>@newItem.TicketNoteKey</td>
@@ -94,7 +95,7 @@
 
                 }
             </RadzenCard>
-            <RadzenButton Text="Add New Note" Icon="save" ButtonStyle="ButtonStyle.Success" Style="float:right" Click="() => SaveTicket()"></RadzenButton>
+            <RadzenButton Text="Add New Note" Icon="save" ButtonStyle="ButtonStyle.Success" Style="float:right" Click="() => PopAddNewNote()"></RadzenButton>
 
         </div>
     </div>
@@ -107,6 +108,7 @@
     private TicketEntity PageModel = new();
     protected override void OnInitialized()
     {
+        dialogService.OnClose += DialogPopupClosed;
         if (ITPS.Data.Code.LocalFunctions.IsNumeric(TicketKey))
         {
             ReloadModel();
@@ -155,4 +157,16 @@
         if(statusItem==null){ return false; }
         else { return statusItem.ClosedInd; }
     }
+    private void PopAddNewNote()
+    {
+        dialogService.Open<ITPS.Pages.NewNote>("Add New Note", new Dictionary<string, object>() {{ "TicketKey", PageModel.TicketKey.ToString() }}, new Radzen.DialogOptions() { Width = "800px", Height = "370px", Resizable = true, Draggable = true });
+    }
+    private async void DialogPopupClosed(dynamic theResult)
+    {
+        if (theResult != null && theResult == true)
+        {
+            ReloadModel();
+        }
+    }
+    
 }
