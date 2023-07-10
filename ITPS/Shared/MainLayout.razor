@@ -400,5 +400,31 @@
     {
         if (ITPS.Data.Code.LocalFunctions.IsNumeric(JumpToTicketKey))
         { NavManager.NavigateTo("/ticket/" + JumpToTicketKey); }
+        else
+        {
+            List <int> TicketArray = new List<int>();
+            string description=JumpToTicketKey;
+            foreach(ticket in PageModel)
+            {
+                if(ticket.LongDescription.Contains(description) || ticket.ShortDescription.Contains(description)
+                {
+                    TicketArray.Add(ticket.TicketKey);
+                  
+                }
+            }
+            if (TicketArray.size()>1)
+            {
+                return "Sorry there are too many tickets that satisfy your requirements. Please refine your search. "
+            }
+            else if (TicketArray.Size()==1)
+            {
+                NavManager.NavigateTo("/ticket/" + TicketArray.get(0);
+                
+            }
+            else
+            {
+                return "Sorry no items matched your search."
+            }
+        }
     }
 }
