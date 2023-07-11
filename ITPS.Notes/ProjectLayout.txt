@@ -163,7 +163,7 @@ DB Rules:
 	3)	Ticket Priority:
 		List of tickets
 		A way to proritize tickets
-
+		(option https://try.mudblazor.com/snippet/wkcxYFRlqLyfsQlu)
 
 	3)	Charts for front page
 	4)	Ticket Prioritization page
