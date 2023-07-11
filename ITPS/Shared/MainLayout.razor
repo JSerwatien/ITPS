@@ -153,8 +153,8 @@
                                         <button class="btn btn-primary" type="button" @onclick="SearchForTicket">
                                             <i class="fas fa-search fa-sm"></i>
                                         </button>
-                                        <span>@searchMessage</span>
                                     </div>
+                                    <span style="color: red; font-size:10pt">@((MarkupString)searchMessage)</span>
                                 </div>
                             </form>
 
@@ -396,11 +396,12 @@
     }
     public void ReloadPage(dynamic theResult)
     {
-        
+
         StateHasChanged();
     }
     private void SearchForTicket()
     {
+        searchMessage = string.Empty;
         if (ITPS.Data.Code.LocalFunctions.IsNumeric(JumpToTicketKey))
         { NavManager.NavigateTo("/ticket/" + JumpToTicketKey); }
         else
@@ -410,7 +411,7 @@
             TicketArray=ITPS.Data.Code.TicketFactory.GetTicketByDescription(description);
             if (TicketArray.Count()>1)
             {
-                searchMessage="Sorry there are too many tickets that satisfy your requirements. Please refine your search. ";
+                searchMessage = "<b>There were too many tickets found. Please refine your search.</b>";
             }
             else if (TicketArray.Count()==1)
             {

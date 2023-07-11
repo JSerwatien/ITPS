@@ -64,19 +64,26 @@
     }
     private void ReloadModel()
     {
-        //Load Data
-        RawData = ITPS.Data.Code.TicketFactory.GetReportData();
-        FilterData();
+        try
+        {
+            RawData = ITPS.Data.Code.TicketFactory.GetReportData();
+            FilterData();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+ 
     }
     private void FilterData()
     {
         if(HideClosedTickets && HideAssignedTickets)
         {
-            PageModel = RawData.Where(x => x.StatusIsClosed = false && x.AssignedToUserProfileKey > 0).ToList();
+            PageModel = RawData.Where(x => x.StatusIsClosed == false && x.AssignedToUserProfileKey > 0).ToList();
         }
         else if(HideClosedTickets)
         {
-            PageModel = RawData.Where(x =>  x.StatusIsClosed = false).ToList();
+            PageModel = RawData.Where(x =>  x.StatusIsClosed == false).ToList();
         }
         else if (HideAssignedTickets)
         {

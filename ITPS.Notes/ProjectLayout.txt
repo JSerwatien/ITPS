@@ -156,14 +156,14 @@ DB Rules:
 
 
 	Current HW:
-	1)	Finish Ticket Reporting page
-		a)	Load list of entities
-		b)	Confirm page is working as expected
-	2)	Top search bar functionality:
-		a)	If numeric, just jump to ticket
-		b)	If text:
-			i)	If one ticket has a match in short/long description, jump to ticket
-			ii)	Otherwise, display message saying X # of tickets found.  Please refine your search.
+	1)	Make sure your databases are up to date with data
+	2)	Ticket Calendar:
+		List of tickets
+		Loop through and add to calendar
+	3)	Ticket Priority:
+		List of tickets
+		A way to proritize tickets
+
 
 	3)	Charts for front page
 	4)	Ticket Prioritization page

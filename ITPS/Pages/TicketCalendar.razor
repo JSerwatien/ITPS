@@ -1,0 +1,65 @@
+﻿@page "/TicketCalendar"
+@inject Radzen.DialogService dialogService
+@using Radzen
+@using ITPS.Data.Code
+@using ITPS.Entity
+<div class="container-fluid" style="width:1500px !important; margin-left:-225px">
+    @if (!string.IsNullOrEmpty(PageMessage))
+    {
+        <div class="alert alert-success" role="alert">
+            @PageMessage
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @ErrorMessage
+        </div>
+    }
+    <RadzenScheduler @ref=@PageModel SlotRender=@OnSlotRender style="height: 768px;" TItem="TicketEntity" Data=@TicketList StartProperty="Start" EndProperty="End"
+                     TextProperty="Text" SelectedIndex="2">
+        <RadzenDayView />
+        <RadzenWeekView />
+        <RadzenMonthView />
+        <RadzenYearView />
+    </RadzenScheduler>
+</div>
+@code {
+    [CascadingParameter]
+    public CascadingAppState AppState { get; set; }
+    private RadzenScheduler<TicketEntity> PageModel = new();
+    private string PageMessage = string.Empty;
+    private string ErrorMessage = string.Empty;
+    private IList<TicketEntity> TicketList = new List<TicketEntity>();
+    protected override void OnInitialized()
+    {
+        ReloadModel();
+    }
+    private void ReloadModel()
+    {
+        try
+        {
+            //Load Data
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+
+    }
+    void OnSlotRender(SchedulerSlotRenderEventArgs args)
+    {
+        // Highlight today in month view
+        if (args.View.Text == "Month" && args.Start.Date == DateTime.Today)
+        {
+            args.Attributes["style"] = "background: rgba(255,220,40,.2);";
+        }
+
+        // Highlight working hours (9-18)
+        if ((args.View.Text == "Week" || args.View.Text == "Day") && args.Start.Hour > 8 && args.Start.Hour < 19)
+        {
+            args.Attributes["style"] = "background: rgba(255,220,40,.2);";
+        }
+    }
+
+}

@@ -26,17 +26,27 @@ namespace ITPS.Data.Code
                 returnData.StatusKey = Convert.ToInt32(theData["StatusKey"]);
                 returnData.DueDate = Convert.ToDateTime(theData["DueDate"]);
                 returnData.CreatedDateTime = Convert.ToDateTime(theData["CreatedDateTime"]);
-                returnData.LastUpdatedDateTime = Convert.ToDateTime(theData["LastUpdatedDateTime"]);
+                if (theData["LastUpdatedDateTime"] != DBNull.Value)
+                { returnData.LastUpdatedDateTime = Convert.ToDateTime(theData["LastUpdatedDateTime"]); }
                 returnData.CreatedBy = theData["CreatedBy"].ToString();
                 returnData.LastUpdatedBy = theData["LastUpdatedBy"].ToString();
                 returnData.Status = theData["Status"].ToString();
-                returnData.AssignedToDisplayName = theData["AssignedToFirstName"].ToString() + " " + theData["AssignedToLastName"].ToString();
-                returnData.StatusCode = theData["StatusCode"].ToString();
+                if (theData.Table.Columns.Contains("AssignedToFirstName"))
+                {
+                    returnData.AssignedToDisplayName = theData["AssignedToFirstName"].ToString() + " " + theData["AssignedToLastName"].ToString();
+                }
+                if (theData.Table.Columns.Contains("AssignedToDisplayName"))
+                {
+                    returnData.AssignedToDisplayName = theData["AssignedToDisplayName"].ToString();
+                }
+                if (theData.Table.Columns.Contains("StatusCode"))
+                { returnData.StatusCode = theData["StatusCode"].ToString();}
                 if (theData.Table.Columns.Contains("TicketOwnerDisplayName"))
                 {
                     returnData.TicketOwnerDisplayName = theData["TicketOwnerDisplayName"].ToString();
                 }
-                
+                if (theData.Table.Columns.Contains("ClosedInd"))
+                { returnData.StatusIsClosed = theData["ClosedInd"].ToString() == "1"; }
             }
             catch (Exception ex)
             {

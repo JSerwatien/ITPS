@@ -1,0 +1,42 @@
+﻿@page "/TicketPriority"
+@inject Radzen.DialogService dialogService
+@using Radzen
+@using ITPS.Data.Code
+<div class="container-fluid" style="width:1500px !important; margin-left:-225px">
+    @if (!string.IsNullOrEmpty(PageMessage))
+    {
+        <div class="alert alert-success" role="alert">
+            @PageMessage
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @ErrorMessage
+        </div>
+    }
+</div>
+@code {
+    [CascadingParameter]
+    public CascadingAppState AppState { get; set; }
+    private List<TicketEntity> PageModel = new();
+    private string PageMessage = string.Empty;
+    private string ErrorMessage = string.Empty;
+    protected override void OnInitialized()
+    {
+        ReloadModel();
+    }
+    private void ReloadModel()
+    {
+        try
+        {
+            //Load Data
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+
+    }
+
+}
