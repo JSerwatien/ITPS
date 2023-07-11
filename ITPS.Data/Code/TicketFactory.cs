@@ -32,7 +32,11 @@ namespace ITPS.Data.Code
                 returnData.Status = theData["Status"].ToString();
                 returnData.AssignedToDisplayName = theData["AssignedToFirstName"].ToString() + " " + theData["AssignedToLastName"].ToString();
                 returnData.StatusCode = theData["StatusCode"].ToString();
-                //NEED TO ADD THE LAST TWO COLUMNS : STATUS AND STATUS CODE HOWEVER NOT IN TICKET ENTITY
+                if (theData.Table.Columns.Contains("TicketOwnerDisplayName"))
+                {
+                    returnData.TicketOwnerDisplayName = theData["TicketOwnerDisplayName"].ToString();
+                }
+                
             }
             catch (Exception ex)
             {
@@ -124,7 +128,12 @@ namespace ITPS.Data.Code
             DataSet ds = new();
             try
             {
-
+                ds = DataFactory.GetDataSet(strSQL, "TicketReport");
+                foreach(DataRow newRow in ds.Tables[0].Rows)
+                {
+                    returnData.Add(LoadSummaryTicketFromDataRow(newRow));
+                }
+                
             }
             catch (Exception ex)
             {
