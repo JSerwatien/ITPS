@@ -153,6 +153,7 @@
                                         <button class="btn btn-primary" type="button" @onclick="SearchForTicket">
                                             <i class="fas fa-search fa-sm"></i>
                                         </button>
+                                        <span>@searchMessage</span>
                                     </div>
                                 </div>
                             </form>
@@ -384,6 +385,7 @@
     [CascadingParameter]
     public CascadingAppState AppState { get; set; }
     private string JumpToTicketKey = string.Empty;
+    private string searchMessage;
     protected override void OnInitialized()
     {
         if(AppState.CurrentUser==null && !NavManager.Uri.ToUpper().Contains("/LOGIN"))
@@ -401,5 +403,23 @@
     {
         if (ITPS.Data.Code.LocalFunctions.IsNumeric(JumpToTicketKey))
         { NavManager.NavigateTo("/ticket/" + JumpToTicketKey); }
+        else
+        {
+            List <int> TicketArray = new List<int>();
+            string description=JumpToTicketKey;
+            TicketArray=ITPS.Data.Code.TicketFactory.GetTicketByDescription(description);
+            if (TicketArray.Count()>1)
+            {
+                searchMessage="Sorry there are too many tickets that satisfy your requirements. Please refine your search. ";
+            }
+            else if (TicketArray.Count()==1)
+            {
+                NavManager.NavigateTo("/ticket/" + TicketArray[0]);
+            }
+            else
+            {
+                searchMessage= "Sorry no items matched your search.";
+            }
+        }
     }
 }

@@ -3723,7 +3723,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Radzen.Blazor" Version="4.13.2" />
+    <PackageReference Include="Radzen.Blazor" Version="4.13.5" />
   </ItemGroup>
 
   <ItemGroup>
