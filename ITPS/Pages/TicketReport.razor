@@ -65,10 +65,10 @@
     private void ReloadModel()
     {
         //Load Data
-        foreach (ticket in RawData)
+        foreach (TicketEntity ticket in RawData)
         {
-            Ticket loadedTicket=LoadTicket(ticket.TicketKey);
-            PageModel.add(loadedTicket);
+            ITPS.Entity.TicketEntity loadedTicket=ITPS.Data.Code.TicketFactory.LoadTicket(ticket.TicketKey);
+            PageModel.Add(loadedTicket);
         }
         FilterData();
     }

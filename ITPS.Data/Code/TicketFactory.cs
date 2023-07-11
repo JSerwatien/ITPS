@@ -38,7 +38,7 @@ namespace ITPS.Data.Code
             {
                 returnData.ErrorObject = ex;
             }
-           
+
             return returnData;
         }
         public static TicketEntity LoadTicket(int ticketKey)
@@ -49,7 +49,7 @@ namespace ITPS.Data.Code
             try
             {
                 ds = DataFactory.GetDataSet(strSQL, "TicketData");
-                if (ds.Tables[0].Rows.Count==0)
+                if (ds.Tables[0].Rows.Count == 0)
                 { returnData.ErrorObject = new Exception("No ticket was found for ticket ID " + ticketKey); }
                 else
                 {
@@ -60,7 +60,7 @@ namespace ITPS.Data.Code
             }
             catch (Exception ex)
             {
-                returnData.ErrorObject= ex;
+                returnData.ErrorObject = ex;
             }
             return returnData;
         }
@@ -87,7 +87,7 @@ namespace ITPS.Data.Code
             }
             catch (Exception ex)
             {
-                returnData.ErrorObject=ex;
+                returnData.ErrorObject = ex;
             }
             return returnData;
         }
@@ -99,11 +99,11 @@ namespace ITPS.Data.Code
             {
                 ds = DataFactory.GetDataSet(strSQL, "SaveTicket");
                 theTicket.TicketKey = Convert.ToInt32(ds.Tables[0].Rows[0][0]);
-                theTicket= LoadTicket(theTicket.TicketKey);
+                theTicket = LoadTicket(theTicket.TicketKey);
             }
             catch (Exception ex)
             {
-                theTicket.ErrorObject=ex;
+                theTicket.ErrorObject = ex;
             }
             return theTicket;
         }
@@ -131,6 +131,29 @@ namespace ITPS.Data.Code
                 throw ex;
             }
             return returnData;
+        }
+
+        public static List<int> GetTicketByDescription(string desc)
+        {
+            List<int> returnData = new();
+            string strSQL = "exec dbo.Ticket_SELKeyByDescription '{0}'";
+            DataSet ds = new();
+            try
+            {
+                strSQL = string.Format(strSQL, desc.Replace("'", "''"));
+                ds = DataFactory.GetDataSet(strSQL, "tableKeys");
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    returnData.Add(Convert.ToInt32(dr["TicketKey"]));
+                }
+                return returnData;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
         }
     }
 }
