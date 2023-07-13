@@ -200,3 +200,6 @@ AS
 			WHERE TicketKey IN (SELECT TicketKey FROM Inserted)
         END
 GO
+
+
+

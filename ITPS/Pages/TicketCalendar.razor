@@ -3,6 +3,7 @@
 @using Radzen
 @using ITPS.Data.Code
 @using ITPS.Entity
+@using System.Data;
 <div class="container-fluid" style="width:1500px !important; margin-left:-225px">
     @if (!string.IsNullOrEmpty(PageMessage))
     {
@@ -39,13 +40,22 @@
     {
         try
         {
-            //Load Data
+            List <TicketEntity> returnData = new();
+            string strSQL = "EXEC dbo.Ticket_SELDueDate";
+            DataSet ds = new();
+            ds = DataFactory.GetDataSet(strSQL, "TicketDueDate");
+            foreach(DataRow row in DataTables.Rows)
+            {
+                returnData.Add(row["DueDate"].ConvertToString());
+            }
+
         }
+
         catch (Exception ex)
         {
             ErrorMessage = ex.Message;
         }
-
+        return returnData;
     }
     void OnSlotRender(SchedulerSlotRenderEventArgs args)
     {
