@@ -156,23 +156,25 @@ DB Rules:
 
 
 	Current HW:
-	1)	Make sure your databases are up to date with data
-	2)	Ticket Calendar:
-		List of tickets
-		Loop through and add to calendar
-	3)	Ticket Priority:
-		List of tickets
-		A way to proritize tickets
-		(option https://try.mudblazor.com/snippet/wkcxYFRlqLyfsQlu)
+	1)	Ticket Calendar:
+		If the Due Date is within 5 days of today or in the past, make the background of the text red
+	2)	Ticket Priority:
+		Make #1 priority tickets a different color
+		Save changes
+	**Add Message and Alert table:
+		1)	Alert table
+		2)	Alert Type table
+		3)	When loading user information, pull alerts and messages by user if less than 7 days old
+		4)	If UserProfileKey IS NULL, it's for everyone
 
 	3)	Charts for front page
-	4)	Ticket Prioritization page
-	5)	Calendar page
-	6)	Ability to remove my notes
-	7)	On error on Ticket page, disable buttons
-	8)	Ticket assignment page (for all open tickets)
-	9)	Reporting
-	
+	5)	On error on Ticket page, disable buttons
+	6)	Reporting
+	7)	General site cleanup
+		Profile dropdown:
+			Quote of the day
+			Log out
+	8)	Publishing
 
 
 	Thursday:

@@ -15,6 +15,30 @@
             @ErrorMessage
         </div>
     }
+    <RadzenButton Text="Save" Icon="save" ButtonStyle="ButtonStyle.Success" Style="float:right" Click="() => SaveChanges()"></RadzenButton>
+    <br /><br/>
+    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5"
+                    AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                    Data="@PageModel" TItem="TicketEntity" LogicalFilterOperator="LogicalFilterOperator.Or">
+        <Columns>
+            <RadzenDataGridColumn TItem="TicketEntity" Title="ID" TextAlign="TextAlign.Center">
+                <Template Context="TheData">
+                    <a href="/ticket/@TheData.TicketKey">@TheData.TicketKey</a>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="TicketEntity" Property="ShortDescription" Title="Summary" />
+            <RadzenDataGridColumn TItem="TicketEntity" Property="LongDescription" Title="Description" />
+            <RadzenDataGridColumn TItem="TicketEntity" Property="AssignedToDisplayName" Title="Assigned To" />
+            <RadzenDataGridColumn TItem="TicketEntity" Property="TicketOwnerDisplayName" Title="Owner" />
+            <RadzenDataGridColumn TItem="TicketEntity" Property="DueDate" Title="Due Date" FormatString="{0:d}" />
+            <RadzenDataGridColumn TItem="TicketEntity" Property="Status" Title="Status" />
+            <RadzenDataGridColumn TItem="TicketEntity" Title="Priority" TextAlign="TextAlign.Center">
+                <Template Context="TheData">
+                    <RadzenNumeric @bind-Value=@TheData.Priority Min="1" TValue="int" Max="@PageModel.Count" Change=@(args => SortGrid(TheData.TicketKey)) />
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
 </div>
 @code {
     [CascadingParameter]
@@ -22,6 +46,7 @@
     private List<TicketEntity> PageModel = new();
     private string PageMessage = string.Empty;
     private string ErrorMessage = string.Empty;
+    private List<int> ChangedTicketKeys = new();
     protected override void OnInitialized()
     {
         ReloadModel();
@@ -30,7 +55,8 @@
     {
         try
         {
-            //Load Data
+            PageModel = TicketFactory.GetReportData();
+
         }
         catch (Exception ex)
         {
@@ -38,5 +64,31 @@
         }
 
     }
-
+    private void SortGrid(int ticketKey)
+    {
+        LogTicketChange(ticketKey);
+        PageMessage = "Ticket " + ticketKey + " has changed (" + ChangedTicketKeys.Count + ")";
+        PageModel = PageModel.OrderBy(x => x.Priority).ToList();
+        StateHasChanged();
+    }
+    private void SaveChanges()
+    {
+        try
+        {
+            foreach(int i in ChangedTicketKeys)
+            {
+                var currentTicket = PageModel.Where(x => x.TicketKey == i).FirstOrDefault();
+                //Save Change
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
+    private void LogTicketChange(int ticketKey)
+    {
+        if(!ChangedTicketKeys.Contains(ticketKey))
+        { ChangedTicketKeys.Add(ticketKey); }
+    }
 }

@@ -17,6 +17,12 @@
             @PageModel.ErrorObject.Message
         </div>
     }
+    @if (!string.IsNullOrEmpty(PageMessage))
+    {
+        <div class="alert alert-warning" role="alert">
+            @((MarkupString)PageMessage)
+        </div>
+    }
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         @if (!string.IsNullOrEmpty(AppState.CurrentUser?.ErrorMessage))
@@ -307,7 +313,7 @@
     public CascadingAppState AppState { get; set; }
 
     private FrontPageDataEntity PageModel = new();
-
+    private string PageMessage = string.Empty;
     protected override void OnInitialized()
     {
         ReloadModel();
@@ -325,5 +331,14 @@
         { return AppState.CurrentUser.ErrorMessage; }
         else
         { return "Welcome Back, " + AppState.CurrentUser.FirstName + "  " + AppState.CurrentUser.LastName; }
+    }
+    private void GetQuote()
+    {
+        Random theRandom = new Random();
+        int randomNumber = theRandom.Next(1, 2);
+        if(randomNumber == 1)
+        { PageMessage = QuoteFactory.GetRandomQuote(); }
+        else if (randomNumber==2)
+        { PageMessage = QuoteFactory.GetRandomJoke(); }
     }
 }

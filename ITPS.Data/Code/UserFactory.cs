@@ -68,6 +68,7 @@ namespace ITPS.Data.Code
                 returnData.DepartmentCode = newRow["DepartmentCode"].ToString();
                 returnData.DepartmentKey = Convert.ToInt32(newRow["DepartmentKey"]);
                 returnData.UserProfileKey = Convert.ToInt32(newRow["UserProfileKey"]);
+                returnData.SQLUserName = newRow["SQLUserName"].ToString();
             }
             catch (Exception ex)
             {

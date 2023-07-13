@@ -1,5 +1,6 @@
 ﻿@page "/TicketCalendar"
 @inject Radzen.DialogService dialogService
+@inject NavigationManager NavManager
 @using Radzen
 @using ITPS.Data.Code
 @using ITPS.Entity
@@ -17,8 +18,8 @@
             @ErrorMessage
         </div>
     }
-    <RadzenScheduler @ref=@PageModel SlotRender=@OnSlotRender style="height: 768px;" TItem="TicketEntity" Data=@TicketList StartProperty="Start" EndProperty="End"
-                     TextProperty="Text" SelectedIndex="2">
+    <RadzenScheduler @ref=@PageModel SlotRender=@OnSlotRender style="height: 768px;" TItem="Radzen.Blazor.AppointmentData" Data=@AppointmentList StartProperty="Start" EndProperty="End"
+                     TextProperty="Text" SelectedIndex="2" AppointmentSelect=@OnAppointmentSelect >
         <RadzenDayView />
         <RadzenWeekView />
         <RadzenMonthView />
@@ -28,10 +29,11 @@
 @code {
     [CascadingParameter]
     public CascadingAppState AppState { get; set; }
-    private RadzenScheduler<TicketEntity> PageModel = new();
+    private RadzenScheduler<Radzen.Blazor.AppointmentData> PageModel = new();
     private string PageMessage = string.Empty;
     private string ErrorMessage = string.Empty;
-    private IList<TicketEntity> TicketList = new List<TicketEntity>();
+    private IList<Radzen.Blazor.AppointmentData> AppointmentList = new List<Radzen.Blazor.AppointmentData>();
+    private List<TicketEntity> TicketList = new();
     protected override void OnInitialized()
     {
         ReloadModel();
@@ -40,22 +42,18 @@
     {
         try
         {
-            List <TicketEntity> returnData = new();
-            string strSQL = "EXEC dbo.Ticket_SELDueDate";
-            DataSet ds = new();
-            ds = DataFactory.GetDataSet(strSQL, "TicketDueDate");
-            foreach(DataRow row in DataTables.Rows)
+            TicketList = TicketFactory.GetScheduleData();
+            AppointmentList = new List<Radzen.Blazor.AppointmentData>();
+            foreach(TicketEntity newItem in TicketList)
             {
-                returnData.Add(row["DueDate"].ConvertToString());
+                AppointmentList.Add(new AppointmentData { Data=newItem.TicketKey, Start = Convert.ToDateTime(newItem.DueDate.ToString("yyyy-MM-dd 00:00:00")), End = Convert.ToDateTime(newItem.DueDate.ToString("yyyy-MM-dd 23:59:59")), Text = newItem.ShortDescription });
             }
-
         }
 
         catch (Exception ex)
         {
             ErrorMessage = ex.Message;
         }
-        return returnData;
     }
     void OnSlotRender(SchedulerSlotRenderEventArgs args)
     {
@@ -71,5 +69,8 @@
             args.Attributes["style"] = "background: rgba(255,220,40,.2);";
         }
     }
-
+    private void OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<AppointmentData> args)
+    {
+        NavManager.NavigateTo("/Ticket/" + args.Data.Data);
+    }
 }

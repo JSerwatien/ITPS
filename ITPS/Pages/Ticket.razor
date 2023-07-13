@@ -17,7 +17,7 @@
         </div>
     }
     <h1>Ticket ID: @GetTicketIDForDisplay()</h1>
-    
+
     <div class="row">
         <div class="col-md-6">
             <h2>Description:</h2>
@@ -62,7 +62,7 @@
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Assigned To:</RadzenText>
                 <RadzenDropDown TValue="int" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
                                 Data=@AppState.CurrentUser.StartupObjects.Users TextProperty="DisplayName" ValueProperty="UserProfileKey" @bind-Value=PageModel.AssignedToUserProfileKey class="form-control" />
-                @if(PageModel.TicketKey>0)
+                @if (PageModel.TicketKey > 0)
                 {
                     <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Status:</RadzenText>
                     <RadzenDropDown TValue="int" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
@@ -78,9 +78,10 @@
                     <table class="table table-hover table-striped" style="font-size:8pt; font-family:verdana">
                         <tr>
                             <th style="width:5%">ID</th>
-                            <th style="width:75%">Note</th>
-                            <th style="width:10%">Created By</th>
-                            <th style="width:10%">Created On</th>
+                            <th style="width:60%">Note</th>
+                            <th style="width:15%">Created By</th>
+                            <th style="width:15%">Created On</th>
+                            <th style="width:5%">Remove</th>
                         </tr>
                         @foreach (TicketNoteEntity newItem in PageModel.NoteList.OrderByDescending(x => x.CreatedDateTime))
                         {
@@ -89,6 +90,12 @@
                                 <td>@newItem.Note</td>
                                 <td>@newItem.NoteEnteredBy</td>
                                 <td>@newItem.CreatedDateTime.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    @if (@newItem.NoteEnteredBy == AppState.CurrentUser.SQLUserName)
+                                    {
+                                        <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Click="() => DeleteNote(newItem.TicketNoteKey)" class="btn btn-sm"/>
+                                    }
+                                </td>
                             </tr>
                         }
                     </table>
@@ -133,18 +140,18 @@
     private void SaveTicket()
     {
         ValidateEntry();
-        if(PageModel.ErrorObject==null)
+        if (PageModel.ErrorObject == null)
         {
             PageModel = TicketFactory.SaveTicket(PageModel, AppState.CurrentUser);
-            if(PageModel.ErrorObject==null)
+            if (PageModel.ErrorObject == null)
             { PageModel.PageMessage = "Your ticket was saved successfully!"; }
         }
     }
     private void ValidateEntry()
     {
         PageModel.ErrorObject = null;
-        if(PageModel.Priority==0){ PageModel.Priority = 99; }
-        if(string.IsNullOrEmpty(PageModel.ShortDescription))
+        if (PageModel.Priority == 0) { PageModel.Priority = 99; }
+        if (string.IsNullOrEmpty(PageModel.ShortDescription))
         { PageModel.ErrorObject = new Exception("The Short Description field is required"); return; }
         if (string.IsNullOrEmpty(PageModel.LongDescription))
         { PageModel.ErrorObject = new Exception("The Long Description field is required"); return; }
@@ -154,12 +161,12 @@
     private bool StatusIsClosed()
     {
         var statusItem = AppState.CurrentUser.StartupObjects.Statuses.Where(x => x.StatusCodeKey == PageModel.StatusKey).FirstOrDefault();
-        if(statusItem==null){ return false; }
+        if (statusItem == null) { return false; }
         else { return statusItem.ClosedInd; }
     }
     private void PopAddNewNote()
     {
-        dialogService.Open<ITPS.Pages.NewNote>("Add New Note", new Dictionary<string, object>() {{ "TicketKey", PageModel.TicketKey.ToString() }}, new Radzen.DialogOptions() { Width = "800px", Height = "370px", Resizable = true, Draggable = true });
+        dialogService.Open<ITPS.Pages.NewNote>("Add New Note", new Dictionary<string, object>() { { "TicketKey", PageModel.TicketKey.ToString() } }, new Radzen.DialogOptions() { Width = "800px", Height = "370px", Resizable = true, Draggable = true });
     }
     private async void DialogPopupClosed(dynamic theResult)
     {
@@ -168,5 +175,16 @@
             ReloadModel();
         }
     }
-    
+    private void DeleteNote(int ticketNoteKey)
+    {
+        try
+        {
+            TicketFactory.RemoveNote(ticketNoteKey);
+            ReloadModel();
+        }
+        catch (Exception ex)
+        {
+            PageModel.ErrorObject=ex;
+        }
+    }
 }

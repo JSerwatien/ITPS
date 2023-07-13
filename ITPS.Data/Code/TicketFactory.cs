@@ -174,5 +174,41 @@ namespace ITPS.Data.Code
             }
 
         }
+        public static List<TicketEntity> GetScheduleData()
+        {
+            List<TicketEntity> returnData = new();
+            string strSQL = "EXEC dbo.Ticket_SELDueDate";
+            DataSet ds = new();
+            try
+            {
+                ds = DataFactory.GetDataSet(strSQL, "TicketDueDate");
+                foreach (DataRow row in ds.Tables[0].Rows)
+                {
+                    TicketEntity newItem = new();
+                    newItem.DueDate = Convert.ToDateTime(row["DueDate"]);
+                    newItem.ShortDescription = row["ShortDescription"].ToString();
+                    newItem.TicketKey = Convert.ToInt32(row["TicketKey"]);
+                    returnData.Add(newItem);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return returnData;
+        }
+        public static void RemoveNote(int noteKey)
+        {
+            string strSQL = "EXEC dbo.Note_UPTActiveInd {0},{1}";
+            try
+            {
+                strSQL = string.Format(strSQL, noteKey, 0);
+                DataFactory.GetDataSet(strSQL, "RemoveNote");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }
