@@ -73,4 +73,12 @@
     {
         NavManager.NavigateTo("/Ticket/" + args.Data.Data);
     }
+    void OnAppointmentRender(SchedulerAppointmentRenderEventArgs<AppointmentData> args)
+    {
+       
+        if (args.Data.Start.Date<DateTime.Now.Date || (args.Data.Start.Date>DateTime.Now.Date && args.Data.Start.Date<DateTime.Now.Date.AddDays(5)))
+        {
+            args.Attributes["style"] = "background: red";
+        }
+    }
 }

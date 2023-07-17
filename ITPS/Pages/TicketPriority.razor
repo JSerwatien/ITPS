@@ -35,7 +35,15 @@
             <RadzenDataGridColumn TItem="TicketEntity" Title="Priority" TextAlign="TextAlign.Center">
                 <Template Context="TheData">
                     <RadzenNumeric @bind-Value=@TheData.Priority Min="1" TValue="int" Max="@PageModel.Count" Change=@(args => SortGrid(TheData.TicketKey)) />
-                </Template>
+                    @if (TheData.Priority==1)
+                    {
+                        <span style="color:red;">@TheData.Priority</span>
+                    }
+                    else
+                    {
+                        @TheData.Priority
+                    }
+                    </Template>
             </RadzenDataGridColumn>
         </Columns>
     </RadzenDataGrid>
@@ -56,7 +64,6 @@
         try
         {
             PageModel = TicketFactory.GetReportData();
-
         }
         catch (Exception ex)
         {
