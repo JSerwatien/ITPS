@@ -38,9 +38,39 @@ namespace ITPS.Data.Code
             if(string.IsNullOrEmpty(returnData.ErrorMessage))
             {
                 returnData = LoadSingleUser(ds.Tables[0].Rows[0], returnData);
+                returnData = PopulateNotifications(returnData, ds.Tables[1]);
             }
 
             return returnData;
+        }
+
+        private static UserEntity PopulateNotifications(UserEntity returnData, DataTable dataTable)
+        {
+            try
+            {
+                returnData.NotificationList = new();
+                foreach(DataRow newRow in dataTable.Rows)
+                {
+                    NotificationEntity newItem = new();
+                    newItem.NotificationValue = newRow["NotificationValue"].ToString();
+                    newItem.NotificationType = newRow["NotificationType"].ToString();
+                    newItem.NotificationTypeCode = newRow["NotificationTypeCode"].ToString();
+                    newItem.CreatedBy = newRow["CreatedBy"].ToString();
+                    newItem.LastUpdatedBy = newRow["NotificationValue"].ToString();
+                    newItem.CreatedDateTime = Convert.ToDateTime(newRow["CreatedDateTime"]);
+                    if (newRow["LastUpdatedDateTime"] != DBNull.Value)
+                    { newItem.LastUpdatedDateTime = Convert.ToDateTime(newRow["LastUpdatedDateTime"]); }
+                    newItem.NotificationTypeKey = Convert.ToInt32(newRow["NotificationTypeKey"]);
+                    newItem.UserProfileKey = newRow["UserProfileKey"]!=DBNull.Value ? Convert.ToInt32(newRow["UserProfileKey"]) : 0;
+                    newItem.NotificationKey = Convert.ToInt32(newRow["NotificationKey"]);
+                    returnData.NotificationList.Add(newItem);
+                }
+                return returnData;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("There was an error loading the notifications: " + ex.Message);
+            }
         }
 
         private static UserEntity ValidateUser(DataSet ds, UserEntity returnData)
@@ -69,6 +99,7 @@ namespace ITPS.Data.Code
                 returnData.DepartmentKey = Convert.ToInt32(newRow["DepartmentKey"]);
                 returnData.UserProfileKey = Convert.ToInt32(newRow["UserProfileKey"]);
                 returnData.SQLUserName = newRow["SQLUserName"].ToString();
+                returnData.LastRefreshed = DateTime.Now;
             }
             catch (Exception ex)
             {

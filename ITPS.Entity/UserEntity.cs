@@ -17,6 +17,8 @@
         public string ErrorMessage { get; set; }
         public string DisplayName { get; set; }
         public string SQLUserName { get; set; }
+        public DateTime LastRefreshed { get; set; }
+        public List<NotificationEntity> NotificationList { get; set; }
         public StartUpObjectEntity StartupObjects { get; set; }
     }
 }

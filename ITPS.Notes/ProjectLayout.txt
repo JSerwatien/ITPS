@@ -156,16 +156,18 @@ DB Rules:
 
 
 	Current HW:
-	1)	Ticket Calendar:
-		If the Due Date is within 5 days of today or in the past, make the background of the text red
-	2)	Ticket Priority:
-		Make #1 priority tickets a different color
-		Save changes
+	1)	Ticket Priority:
+		Fix font color = white
+
+	2)	Notifications:
+		Add new tables/triggers
+		Populate type table
+		Create NotificationType entity
+		Get multi-alert icon working
+
 	**Add Message and Alert table:
-		1)	Alert table
-		2)	Alert Type table
-		3)	When loading user information, pull alerts and messages by user if less than 7 days old
-		4)	If UserProfileKey IS NULL, it's for everyone
+		1)	Show All page
+		2)	Auto-refresh user information
 
 	3)	Charts for front page
 	5)	On error on Ticket page, disable buttons

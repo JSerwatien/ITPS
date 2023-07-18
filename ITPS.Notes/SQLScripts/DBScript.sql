@@ -203,3 +203,57 @@ GO
 
 
 
+CREATE TABLE [dbo].[NotificationType](
+	[NotificationTypeKey] [int] IDENTITY(1,1) NOT NULL,
+	[NotificationTypeCode] [varchar](5) NOT NULL,
+	[Description] [varchar](50) NOT NULL,
+ CONSTRAINT [PK_NotificationType] PRIMARY KEY CLUSTERED 
+(
+	[NotificationTypeKey] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+CREATE TABLE [dbo].[Notification](
+	[NotificationKey] [int] IDENTITY(1,1) NOT NULL,
+	[NotificationTypeKey] [int] NOT NULL,
+	[UserProfileKey] [int] NULL,
+	[NotificationValue] [varchar](100) NOT NULL,
+	[CreatedDateTime] [datetime] NULL,
+	[CreatedBy] [varchar](50) NULL,
+	[LastUpdatedDateTime] [datetime] NULL,
+	[LastUpdatedBy] [varchar](50) NULL,
+ CONSTRAINT [PK_Notification] PRIMARY KEY CLUSTERED 
+(
+	[NotificationKey] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[Notification]  WITH CHECK ADD  CONSTRAINT [FK_Notification_NotificationType] FOREIGN KEY([NotificationTypeKey])
+REFERENCES [dbo].[NotificationType] ([NotificationTypeKey])
+GO
+
+ALTER TABLE [dbo].[Notification] CHECK CONSTRAINT [FK_Notification_NotificationType]
+GO
+CREATE TRIGGER [dbo].[TR_Notification_UPT] ON [dbo].[Notification]
+    FOR INSERT, UPDATE
+AS
+    DECLARE @login_name VARCHAR(128)
+ 
+    SELECT  @login_name = login_name
+    FROM    sys.dm_exec_sessions
+    WHERE   session_id = @@SPID
+
+    IF EXISTS ( SELECT * FROM Inserted ) AND EXISTS (SELECT * FROM Deleted)
+        BEGIN
+			UPDATE dbo.Notification
+			SET LastUpdatedBy = @login_name, LastUpdatedDateTime = GETDATE()
+			WHERE NotificationKey IN (SELECT NotificationKey FROM Inserted)
+        END
+    ELSE
+        BEGIN
+			UPDATE dbo.Notification 
+			SET CreatedBy = @login_name, CreatedDateTime = GETDATE()
+			WHERE NotificationKey IN (SELECT NotificationKey FROM Inserted)
+        END
+GO

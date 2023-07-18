@@ -19,9 +19,9 @@
     <br /><br/>
     <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5"
                     AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                    Data="@PageModel" TItem="TicketEntity" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    Data="@PageModel" TItem="TicketEntity" LogicalFilterOperator="LogicalFilterOperator.Or" RowRender="OnRowRender">
         <Columns>
-            <RadzenDataGridColumn TItem="TicketEntity" Title="ID" TextAlign="TextAlign.Center">
+            <RadzenDataGridColumn TItem="TicketEntity" Title="ID" TextAlign="TextAlign.Center" Width="5%">
                 <Template Context="TheData">
                     <a href="/ticket/@TheData.TicketKey">@TheData.TicketKey</a>
                 </Template>
@@ -32,18 +32,10 @@
             <RadzenDataGridColumn TItem="TicketEntity" Property="TicketOwnerDisplayName" Title="Owner" />
             <RadzenDataGridColumn TItem="TicketEntity" Property="DueDate" Title="Due Date" FormatString="{0:d}" />
             <RadzenDataGridColumn TItem="TicketEntity" Property="Status" Title="Status" />
-            <RadzenDataGridColumn TItem="TicketEntity" Title="Priority" TextAlign="TextAlign.Center">
+            <RadzenDataGridColumn TItem="TicketEntity" Title="Priority" TextAlign="TextAlign.Center" Width="10%">
                 <Template Context="TheData">
                     <RadzenNumeric @bind-Value=@TheData.Priority Min="1" TValue="int" Max="@PageModel.Count" Change=@(args => SortGrid(TheData.TicketKey)) />
-                    @if (TheData.Priority==1)
-                    {
-                        <span style="color:red;">@TheData.Priority</span>
-                    }
-                    else
-                    {
-                        @TheData.Priority
-                    }
-                    </Template>
+                </Template>
             </RadzenDataGridColumn>
         </Columns>
     </RadzenDataGrid>
@@ -74,28 +66,46 @@
     private void SortGrid(int ticketKey)
     {
         LogTicketChange(ticketKey);
-        PageMessage = "Ticket " + ticketKey + " has changed (" + ChangedTicketKeys.Count + ")";
         PageModel = PageModel.OrderBy(x => x.Priority).ToList();
         StateHasChanged();
     }
     private void SaveChanges()
     {
+        List<string> errorMessages = new();
         try
         {
+            ClearMessages();
             foreach(int i in ChangedTicketKeys)
             {
                 var currentTicket = PageModel.Where(x => x.TicketKey == i).FirstOrDefault();
-                //Save Change
+                currentTicket = TicketFactory.SaveTicket(currentTicket, AppState.CurrentUser);
+                if(currentTicket.ErrorObject!= null)
+                {errorMessages.Add("There was an error updating ticket #" + currentTicket.TicketKey + ": " + currentTicket.ErrorObject.Message);}
             }
+            if(errorMessages.Count==0)
+            { PageMessage = "Your tickets were updated successfully!"; }
+            else
+            { ErrorMessage = "There was a problem saving some of your information: " + string.Join(";", errorMessages); }
         }
         catch (Exception ex)
         {
             ErrorMessage = ex.Message;
         }
     }
+    private void ClearMessages()
+    {
+        PageMessage = string.Empty;
+        ErrorMessage = string.Empty;
+    }
     private void LogTicketChange(int ticketKey)
     {
         if(!ChangedTicketKeys.Contains(ticketKey))
         { ChangedTicketKeys.Add(ticketKey); }
+    }
+    protected void OnRowRender(RowRenderEventArgs<TicketEntity> args)
+    {
+        if(args.Data.Priority==1)
+        { args.Attributes.Add("style", $"background-color: red;color:white !important");  }
+        
     }
 }
