@@ -314,7 +314,7 @@
     private string JumpToTicketKey = string.Empty;
     private string searchMessage;
     private string PageMessage = string.Empty;
-    private System.Timers.Timer theTimer = new(10000);
+    private System.Timers.Timer theTimer = new(300000);
     protected override void OnInitialized()
     {
         if (AppState.CurrentUser == null && !NavManager.Uri.ToUpper().Contains("/LOGIN"))
@@ -328,13 +328,17 @@
     private void OnTimerCallBack()
     {
         RefreshUserData();
-        StateHasChanged();
     }
     private async Task RefreshUserData()
     {
         string userName = AppState?.CurrentUser?.UserName;
         string password = AppState?.CurrentUser?.Password;
-        //AppState.SetProperty(this, "CurrentUser", ITPS.Data.Code.UserFactory.GetUserInformation(userName, password));
+        await InvokeAsync(() =>
+        {
+            AppState.SetProperty(this, "CurrentUser", ITPS.Data.Code.UserFactory.GetUserInformation(userName, password));
+            StateHasChanged();
+        });
+        
     }
     public void ReloadPage(dynamic theResult)
     {
