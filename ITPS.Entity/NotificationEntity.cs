@@ -18,5 +18,7 @@ namespace ITPS.Entity
         public string LastUpdatedBy { get; set; }
         public string NotificationType { get; set; }
         public string NotificationTypeCode { get; set; }
+        public DateTime ReadDateTime { get; set; }
+        public string NotificationTarget { get; set; }
     }
 }

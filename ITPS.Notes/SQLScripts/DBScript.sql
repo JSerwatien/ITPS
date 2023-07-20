@@ -257,3 +257,40 @@ AS
 			WHERE NotificationKey IN (SELECT NotificationKey FROM Inserted)
         END
 GO
+
+CREATE TABLE [dbo].[NotificationActive](
+	[NotificationActiveKey] [int] IDENTITY(1,1) NOT NULL,
+	[UserProfileKey] [int] NOT NULL,
+	[NotificationKey] [int] NOT NULL,
+	[CreatedDateTime] [datetime] NULL,
+	[CreatedBy] [varchar](50) NULL,
+	[LastUpdatedDateTime] [datetime] NULL,
+	[LastUpdatedBy] [varchar](50) NULL,
+ CONSTRAINT [PK_NotificationActive] PRIMARY KEY CLUSTERED 
+(
+	[NotificationActiveKey] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+CREATE TRIGGER [dbo].[TR_NotificationActive_UPT] ON [dbo].[NotificationActive]
+    FOR INSERT, UPDATE
+AS
+    DECLARE @login_name VARCHAR(128)
+ 
+    SELECT  @login_name = login_name
+    FROM    sys.dm_exec_sessions
+    WHERE   session_id = @@SPID
+
+    IF EXISTS ( SELECT * FROM Inserted ) AND EXISTS (SELECT * FROM Deleted)
+        BEGIN
+			UPDATE dbo.NotificationActive
+			SET LastUpdatedBy = @login_name, LastUpdatedDateTime = GETDATE()
+			WHERE NotificationActiveKey IN (SELECT NotificationActiveKey FROM Inserted)
+        END
+    ELSE
+        BEGIN
+			UPDATE dbo.NotificationActive 
+			SET CreatedBy = @login_name, CreatedDateTime = GETDATE()
+			WHERE NotificationActiveKey IN (SELECT NotificationActiveKey FROM Inserted)
+        END
+GO

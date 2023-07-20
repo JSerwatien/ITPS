@@ -23,15 +23,94 @@
         <Columns>
             <RadzenDataGridColumn TItem="TicketEntity" Title="ID" TextAlign="TextAlign.Center" Width="5%">
                 <Template Context="TheData">
-                    <a href="/ticket/@TheData.TicketKey">@TheData.TicketKey</a>
+                    @if(TheData.Priority==1)
+                    {
+                        <span style="color: white!important"><a href="/ticket/@TheData.TicketKey">@TheData.TicketKey</a></span>
+                    }
+                    else
+                    {
+                        <span style="color: black!important"><a href="/ticket/@TheData.TicketKey">@TheData.TicketKey</a></span>
+                    }
+                    
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="TicketEntity" Property="ShortDescription" Title="Summary" />
-            <RadzenDataGridColumn TItem="TicketEntity" Property="LongDescription" Title="Description" />
-            <RadzenDataGridColumn TItem="TicketEntity" Property="AssignedToDisplayName" Title="Assigned To" />
-            <RadzenDataGridColumn TItem="TicketEntity" Property="TicketOwnerDisplayName" Title="Owner" />
-            <RadzenDataGridColumn TItem="TicketEntity" Property="DueDate" Title="Due Date" FormatString="{0:d}" />
-            <RadzenDataGridColumn TItem="TicketEntity" Property="Status" Title="Status" />
+            <RadzenDataGridColumn TItem="TicketEntity" Property="ShortDescription" Title="Summary">
+                <Template Context="TheData">
+                    @if (TheData.Priority == 1)
+                    {
+                        <span style="color: white!important">@TheData.ShortDescription</span>
+                    }
+                    else
+                    {
+                        <span style="color: black!important">@TheData.ShortDescription</span>
+                    }
+
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="TicketEntity" Property="LongDescription" Title="Description">
+                <Template Context="TheData">
+                    @if (TheData.Priority == 1)
+                    {
+                        <span style="color: white!important">@TheData.LongDescription</span>
+                    }
+                    else
+                    {
+                        <span style="color: black!important">@TheData.LongDescription</span>
+                    }
+
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="TicketEntity" Property="AssignedToDisplayName" Title="Assigned To">
+                <Template Context="TheData">
+                    @if (TheData.Priority == 1)
+                    {
+                        <span style="color: white!important">@TheData.AssignedToDisplayName</span>
+                    }
+                    else
+                    {
+                        <span style="color: black!important">@TheData.AssignedToDisplayName</span>
+                    }
+
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="TicketEntity" Property="TicketOwnerDisplayName" Title="Owner">
+                <Template Context="TheData">
+                    @if (TheData.Priority == 1)
+                    {
+                        <span style="color: white!important">@TheData.TicketOwnerDisplayName</span>
+                    }
+                    else
+                    {
+                        <span style="color: black!important">@TheData.TicketOwnerDisplayName</span>
+                    }
+
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="TicketEntity" Property="DueDate" Title="Due Date">
+                <Template Context="TheData">
+                    @if (TheData.Priority == 1)
+                    {
+                        <span style="color: white!important">@TheData.DueDate.ToString("yyyy-MM-dd")</span>
+                    }
+                    else
+                    {
+                        <span style="color: black!important">@TheData.DueDate.ToString("yyyy-MM-dd")</span>
+                    }
+
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="TicketEntity" Property="Status" Title="Status">
+                <Template Context="TheData">
+                    @if (TheData.Priority == 1)
+                    {
+                        <span style="color: white!important">@TheData.Status</span>
+                    }
+                    else
+                    {
+                        <span style="color: black!important">@TheData.Status</span>
+                    }
+                </Template>
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="TicketEntity" Title="Priority" TextAlign="TextAlign.Center" Width="10%">
                 <Template Context="TheData">
                     <RadzenNumeric @bind-Value=@TheData.Priority Min="1" TValue="int" Max="@PageModel.Count" Change=@(args => SortGrid(TheData.TicketKey)) />
@@ -105,7 +184,14 @@
     protected void OnRowRender(RowRenderEventArgs<TicketEntity> args)
     {
         if(args.Data.Priority==1)
-        { args.Attributes.Add("style", $"background-color: red;color:white !important");  }
-        
+        { args.Attributes.Add("style", $"background-color: red"); }
+    }
+    protected void CellRender(DataGridCellRenderEventArgs<TicketEntity> args)
+    {
+        if (args.Data.Priority == 1)
+        {
+            args.Attributes.Add("style", "color: white !important;");
+            args.Attributes.Add("class", "white-text");
+        }
     }
 }

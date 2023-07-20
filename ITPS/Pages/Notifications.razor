@@ -1,0 +1,87 @@
+﻿@page "/Notifications"
+@inject Radzen.DialogService dialogService
+@using Radzen
+@using ITPS.Data.Code
+<div class="container-fluid" style="width:1500px !important; margin-left:-225px">
+    @if (!string.IsNullOrEmpty(PageMessage))
+    {
+        <div class="alert alert-success" role="alert">
+            @PageMessage
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @ErrorMessage
+        </div>
+    }
+    <h1>Notifications</h1>
+    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="20"
+                    AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                    Data="@PageModel" TItem="NotificationEntity" LogicalFilterOperator="LogicalFilterOperator.Or">
+        <Columns>
+            <RadzenDataGridColumn TItem="NotificationEntity" Property="NotificationValue" Title="Notification" />
+            <RadzenDataGridColumn TItem="NotificationEntity" Property="NotificationType" Title="Type" />
+            <RadzenDataGridColumn TItem="NotificationEntity" Property="NotificationTarget" Title="Audience" />
+            <RadzenDataGridColumn TItem="TicketEntity" Property="CreatedDateTime" Title="Notification Date">
+                <Template Context="TheData">
+                    @TheData.CreatedDateTime.ToString("yyyy-MM-dd")
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="NotificationEntity" Property="CreatedDateTime" Title="Notification Date" />
+            <RadzenDataGridColumn TItem="NotificationEntity" Property="CreatedBy" Title="CreatedBy" />
+            <RadzenDataGridColumn TItem="NotificationEntity" Title="ID" TextAlign="TextAlign.Center">
+                <Template Context="TheData">
+                    @if (TheData.ReadDateTime == DateTime.MinValue)
+                    {
+                        <a href="JavaScript: void(0);" onclick="@(() => UpdateNotificationToRead(TheData))">UNREAD</a>
+                    }
+                    else
+                    {
+                        <a href="JavaScript: void(0);" onclick="@(() => UpdateNotificationToRead(TheData))">READ</a>
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+
+</div>
+@code {
+    [CascadingParameter]
+    public CascadingAppState AppState { get; set; }
+    private List<NotificationEntity> PageModel = new();
+    private string PageMessage = string.Empty;
+    private string ErrorMessage = string.Empty;
+    protected override void OnInitialized()
+    {
+        ReloadModel();
+    }
+    private void ReloadModel()
+    {
+        try
+        {
+            PageModel = ITPS.Data.Code.NotificationFactory.GetAllNotifications(AppState.CurrentUser.UserProfileKey);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+
+    }
+    private void UpdateNotificationToRead(NotificationEntity theNotification)
+    {
+        try
+        {
+            if (theNotification.ReadDateTime == DateTime.MinValue)
+            {
+                NotificationFactory.UpdateNotificationToRead(theNotification, AppState.CurrentUser.UserProfileKey);
+                ReloadModel();
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
+}
