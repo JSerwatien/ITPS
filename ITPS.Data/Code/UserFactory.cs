@@ -11,6 +11,29 @@ namespace ITPS.Data.Code
 {
     public class UserFactory
     {
+        public static UserChallengeEntity GetUserChallengeInformation(string userName)
+        {
+            string strSQL = "EXEC dbo.User_GetChallengeInformation '{0}'";
+            DataSet ds = new();
+            UserChallengeEntity returnData = new();
+            try
+            {
+                returnData.UserName = userName;
+                strSQL = string.Format(strSQL, LocalFunctions.ScrubValueForSQL(userName));
+                ds = DataFactory.GetDataSet(strSQL, "UserInformation");
+                if(ds.Tables[0].Rows.Count>0)
+                {
+                    returnData.ChallengeQuestion = ds.Tables[0].Rows[0]["ChallengeQuestion"].ToString();
+                    returnData.ChallengeAnswer = ds.Tables[0].Rows[0]["ChallengeAnswer"].ToString();
+                    returnData.Password = ds.Tables[0].Rows[0]["Password"].ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("There was an error finding your information: " + ex.Message);
+            }
+            return returnData;
+        }
         public static UserEntity GetUserInformation(string userName, string passWord)
         {
             string strSQL = "EXEC dbo.User_SEL '{0}'";

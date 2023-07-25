@@ -1,7 +1,9 @@
 ﻿@page "/login"
 @inject NavigationManager NavManager
 @inject Radzen.NotificationService notificationService
-
+@inject DialogService DialogService
+@inject Data.ICookieFactory cookieFactory;
+@inject IJSRuntime JsRuntime;
 <div class="container">
     @if (!string.IsNullOrEmpty(AppState.CurrentUser?.ErrorMessage))
     {
@@ -34,7 +36,13 @@
                                     <div class="form-group">
                                         <Radzen.Blazor.RadzenTextBox type="password" class="form-control form-control-user" placeholder="Enter Password..." @bind-Value="@Password" />
                                     </div>
-                                    <Radzen.Blazor.RadzenButton Icon="user" Text="Login"  Click="@LogUserIn">Login</Radzen.Blazor.RadzenButton>
+                                    <center>
+                                        <Radzen.Blazor.RadzenButton Icon="person" Text="Login" Click="@LogUserIn" />
+                                        <br />
+                                        <a href="JavaScript: void(0)" onclick="@PopForgotPassword">Forgot Password?</a> 
+                                        <br />
+                                        <RadzenCheckBox @bind-Value="RememberMe"/>Remember Me?
+                                    </center>
                                     <hr>
                                 </form>
                             </div>
@@ -52,17 +60,60 @@
     public CascadingAppState AppState { get; set; }
     string UserName = string.Empty;
     string Password = string.Empty;
-
+    private const string UserCookieName = "CurrentUserInformation";
+    private string CookieValue = string.Empty;
+    bool RememberMe = false;
     protected override void OnInitialized()
     {
         AppState.SetProperty(this,"CurrentUser", new UserEntity());
+        TryAutoLogin();
+    }
+    private async void TryAutoLogin()
+    {
+         try
+        {
+            CookieValue = await JsRuntime.InvokeAsync<string>("ReadCookie.ReadCookie", UserCookieName);
+
+            //cookieValue = ITPS.Data.Code.EncryptionFactory.EncryptString("joshs|joshs");
+            if(!string.IsNullOrEmpty(CookieValue))
+            {
+                CookieValue = ITPS.Data.Code.EncryptionFactory.DecryptString(CookieValue);
+                if (!string.IsNullOrEmpty(CookieValue))
+                {
+                    var userArray = CookieValue.Split("|");
+                    UserName = userArray[0].ToString();
+                    Password = userArray[1].ToString();
+                    RememberMe = true;
+                    LogUserIn();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            AppState.CurrentUser.ErrorMessage = ex.Message;
+        }
+    }
+    private async void ReadCookie(string cookieName)
+    {
+        CookieValue= await JsRuntime.InvokeAsync<string>("ReadCookie.ReadCookie", cookieName);
+        //var returnValue= await cookieFactory.ReadCookie(cookieName);
+        //return returnValue;
+    }
+    private async void SaveCookie()
+    {
+        string cookieValue = AppState.CurrentUser.UserName + "|" + AppState.CurrentUser.Password;
+        cookieValue = ITPS.Data.Code.EncryptionFactory.EncryptString(cookieValue);
+        await cookieFactory.WriteCookie(UserCookieName, cookieValue, "15");
     }
     private void LogUserIn()
     {
         AppState.SetProperty(this, "CurrentUser", ITPS.Data.Code.UserFactory.GetUserInformation(UserName, Password));
         RefreshMainLayout();
         if (string.IsNullOrEmpty(AppState.CurrentUser.ErrorMessage))
-        { NavManager.NavigateTo("/"); }
+        { 
+            if(RememberMe){ SaveCookie(); }
+            NavManager.NavigateTo("/"); 
+        }
         else
         { notificationService.Notify(Radzen.NotificationSeverity.Error, "Error Logging In", AppState.CurrentUser.ErrorMessage, 3000); }
     }
@@ -74,7 +125,11 @@
     {
         base.OnAfterRender(firstRender);
         {
-            
+
         }
+    }
+    private void PopForgotPassword()
+    {
+        DialogService.Open<Pages.Popups.ForgotPassword>("Forgot Password", null,new DialogOptions() { Width = "800px", Height = "600px", Resizable = true, Draggable = true });
     }
 }

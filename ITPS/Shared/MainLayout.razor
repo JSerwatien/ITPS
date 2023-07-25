@@ -2,6 +2,7 @@
 @inject NavigationManager NavManager
 @inject Radzen.DialogService dialogService
 @inject Radzen.NotificationService notificationService
+@inject IJSRuntime JsRuntime;
 @using ITPS.Data.Code;
 
 <PageTitle>ITPS</PageTitle>
@@ -273,7 +274,7 @@
                                             Messages &amp; Alerts
                                         </a>
                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                        <a class="dropdown-item" href="JavaScript: void(0);" onclick="@LogOut">
                                             <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                             Logout
                                         </a>
@@ -325,6 +326,7 @@
     private string searchMessage;
     private string PageMessage = string.Empty;
     private System.Timers.Timer theTimer = new(300000);
+    private const string UserCookieName = "CurrentUserInformation";
     protected override void OnInitialized()
     {
         if (AppState.CurrentUser == null && !NavManager.Uri.ToUpper().Contains("/LOGIN"))
@@ -399,7 +401,11 @@
         }
         catch (Exception ex)
         {
-            
+
         }
+    }
+    private async void LogOut()
+    {
+        await JsRuntime.InvokeAsync<string>("Cookies.deleteCookie", UserCookieName);
     }
 }

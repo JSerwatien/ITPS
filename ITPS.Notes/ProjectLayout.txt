@@ -161,6 +161,14 @@ DB Rules:
 	2)	Come up with an improvement for the site (new page, new functionality, etc).
 
 	Error Boundries?
+	ILSPY
+
+	Add alert when assigning ticket (to and from)
+	1)	When it's assigned to someone
+	2)	Assignment change
+	3)	Any status change, to the ticket owner
+
+	Remember Me
 
 	3)	Charts for front page
 	5)	On error on Ticket page, disable buttons
