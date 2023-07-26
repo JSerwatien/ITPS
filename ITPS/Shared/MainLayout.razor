@@ -67,6 +67,7 @@
                  data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Custom Reports:</h6>
+                        <a class="collapse-item" href="/Report">Overview Report</a>
                         <a class="collapse-item" href="/TicketReport">Ticket Report</a>
                         <a class="collapse-item" href="/TicketCalendar">Ticket Calendar</a>
                         <a class="collapse-item" href="/TicketPriority">Ticket Priority</a>
@@ -184,10 +185,12 @@
                                                     <div>
                                                         <div class="small text-gray-500">@newItem.CreatedDateTime.ToString("yyyy-MM-dd hh:mm:ss")</div>
                                                         @if(newItem.ReadDateTime==DateTime.MinValue)
-                                                        {<span class="font-weight-bold">@newItem.NotificationValue</span>}
+                                                        {
+                                                            <span class="font-weight-bold">@((MarkupString)newItem.NotificationValue)</span>
+                                                        }
                                                         else
                                                         {
-                                                            <span>@newItem.NotificationValue</span>
+                                                            <span>@((MarkupString)newItem.NotificationValue)</span>
                                                         }
                                                         <div class="small text-gray-500">@newItem.CreatedBy</div>
                                                     </div>
@@ -234,11 +237,11 @@
                                                         <div class="small text-gray-500">@newItem.CreatedDateTime.ToString("yyyy-MM-dd hh:mm:ss")</div>
                                                         @if (newItem.ReadDateTime == DateTime.MinValue)
                                                         {
-                                                            <span class="font-weight-bold text-truncate">@newItem.NotificationValue</span>
+                                                            <span class="font-weight-bold text-truncate">@((MarkupString)newItem.NotificationValue)</span>
                                                         }
                                                         else
                                                         {
-                                                            <span class="text-truncate" style="font-weight: normal !important">@newItem.NotificationValue</span>
+                                                            <span class="text-truncate" style="font-weight: normal !important">@((MarkupString)newItem.NotificationValue)</span>
                                                         }
                                                         <div class="small text-gray-500">@newItem.CreatedBy</div>
                                                     </div>

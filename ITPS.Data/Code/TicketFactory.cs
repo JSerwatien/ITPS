@@ -88,10 +88,12 @@ namespace ITPS.Data.Code
                 returnData.TicketKey = Convert.ToInt32(newRow["TicketKey"]);
                 returnData.UserProfileKey = Convert.ToInt32(newRow["UserProfileKey"]);
                 returnData.AssignedToUserProfileKey = Convert.ToInt32(newRow["AssignedToUserProfileKey"]);
+                returnData.PreviousAssignedToUserProfileKey = Convert.ToInt32(newRow["AssignedToUserProfileKey"]);
                 returnData.ShortDescription = newRow["ShortDescription"].ToString();
                 returnData.LongDescription = newRow["LongDescription"].ToString();
                 returnData.Priority = Convert.ToInt32(newRow["Priority"]);
                 returnData.StatusKey = Convert.ToInt32(newRow["StatusKey"]);
+                returnData.PreviousStatusKey = Convert.ToInt32(newRow["StatusKey"]);
                 returnData.DueDate = Convert.ToDateTime(newRow["DueDate"]);
                 returnData.CreatedDateTime = Convert.ToDateTime(newRow["CreatedDateTime"]);
                 if (newRow["LastUpdatedDateTime"] != System.DBNull.Value) { returnData.LastUpdatedDateTime = Convert.ToDateTime(newRow["LastUpdatedDateTime"]); }
@@ -113,6 +115,12 @@ namespace ITPS.Data.Code
             {
                 ds = DataFactory.GetDataSet(strSQL, "SaveTicket");
                 theTicket.TicketKey = Convert.ToInt32(ds.Tables[0].Rows[0][0]);
+                if (theTicket.PreviousAssignedToUserProfileKey != theTicket.AssignedToUserProfileKey)
+                { NotifyAssignee(theTicket); }
+                if (theTicket.PreviousStatusKey != theTicket.StatusKey)
+                { NotifyOwnerOfStatusChange(theTicket, currentUser.StartupObjects.Statuses); }
+                theTicket.PreviousAssignedToUserProfileKey = theTicket.AssignedToUserProfileKey;
+                theTicket.PreviousStatusKey = theTicket.StatusKey;
                 theTicket = LoadTicket(theTicket.TicketKey);
             }
             catch (Exception ex)
@@ -120,6 +128,33 @@ namespace ITPS.Data.Code
                 theTicket.ErrorObject = ex;
             }
             return theTicket;
+        }
+
+        private static void NotifyOwnerOfStatusChange(TicketEntity theTicket, List<StatusEntity> statusList)
+        {
+            var currentStatus = statusList.Where(x => x.StatusCodeKey == theTicket.StatusKey).FirstOrDefault();
+            var previousStatus = statusList.Where(x => x.StatusCodeKey == theTicket.PreviousStatusKey).FirstOrDefault();
+            try
+            {
+                NotificationFactory.AddNewNotification(theTicket.UserProfileKey, Constants.NotificationType_Alert, "Ticket #<a href='/ticket/" + theTicket.TicketKey + "'>" + theTicket.TicketKey + "</a> had a status change from " + previousStatus.Status + " to " + currentStatus.Status);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private static void NotifyAssignee(TicketEntity theTicket)
+        {
+            try
+            {
+                NotificationFactory.AddNewNotification(theTicket.AssignedToUserProfileKey, Constants.NotificationType_Alert, "Ticket #<a href='/ticket/" + theTicket.TicketKey + "'>" + theTicket.TicketKey + "</a> has been assigned to you.");
+                if (theTicket.PreviousAssignedToUserProfileKey > 0) { NotificationFactory.AddNewNotification(theTicket.PreviousAssignedToUserProfileKey, Constants.NotificationType_Alert, "Ticket #<a href='/ticket/" + theTicket.TicketKey + "'>" + theTicket.TicketKey + "</a> has been re-assigned to someone else."); }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private static string GetSaveSQL(TicketEntity theTicket, UserEntity currentUser)
@@ -209,6 +244,46 @@ namespace ITPS.Data.Code
             {
                 throw ex;
             }
+        }
+        public static OverviewReportEntity GetOverviewReportData()
+        {
+            OverviewReportEntity returnData = new();
+            string strSQL = "EXEC dbo.GetOverviewReportData";
+            try
+            {
+                returnData.DetailData = new();
+                returnData.RawData = DataFactory.GetDataSet(strSQL, "OverviewData");
+                foreach(DataRow newRow in returnData.RawData.Tables[2].Rows)
+                { returnData.DetailData.Add(LoadSummaryTicketFromDataRow(newRow)); }
+                returnData.AssignedToData = LoadOverviewChartList(returnData.RawData.Tables[0]);
+                returnData.StatusData = LoadOverviewChartList(returnData.RawData.Tables[1]);
+            }
+            catch (Exception ex)
+            {
+                returnData.ErrorObject = ex;
+            }
+            return returnData;
+        }
+
+        private static List<OverviewChartEntity> LoadOverviewChartList(DataTable dataTable)
+        {
+            List<OverviewChartEntity> returnData = new();
+            OverviewChartEntity newItem;
+            foreach (DataRow newRow in dataTable.Rows)
+            {
+                newItem = new();
+                newItem.TableKey = Convert.ToInt32(newRow[0]);
+                newItem.DisplayValue = newRow[1].ToString();
+                newItem.DataCount = Convert.ToInt32(newRow[2]);
+                returnData.Add(newItem);
+            }
+            //Add Show All item
+            newItem = new();
+            newItem.TableKey = -1;
+            newItem.DisplayValue = "Show All";
+            newItem.DataCount = returnData.Sum(x => x.DataCount);
+            returnData.Add(newItem);
+            return returnData;
         }
     }
 }

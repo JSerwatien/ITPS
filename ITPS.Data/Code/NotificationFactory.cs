@@ -68,5 +68,21 @@ namespace ITPS.Data.Code
                 throw ex;
             }
         }
+        public static string AddNewNotification(int userProfileKey, string notificationTypeCode, string notificationValue)
+        {
+            string strSQL = "EXEC dbo.Notification_AddNotification '{0}', {1}, '{2}'";
+            DataSet ds = new DataSet();
+            try
+            {
+                strSQL = string.Format(strSQL, notificationTypeCode.Replace("'", "''"), userProfileKey == 0 ? "NULL" : userProfileKey, notificationValue.Replace("'", "''"));
+                ds = DataFactory.GetDataSet(strSQL, "NewNotification");
+                return ds.Tables[0].Rows[0][0].ToString();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
+        }
     }
 }

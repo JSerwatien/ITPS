@@ -1,4 +1,4 @@
-﻿@page "/Notifications"
+﻿@page "/Report"
 @inject Radzen.DialogService dialogService
 @using Radzen
 @using ITPS.Data.Code
@@ -15,8 +15,48 @@
             @ErrorMessage
         </div>
     }
-    <h1>Notifications</h1>
-    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="20"
+    <h1>Report</h1>
+    <div class="row">
+        <div class="col-sm-12 col-lg-6">
+            <RadzenCard class="w-100 mb-4">
+                <RadzenCheckBox @bind-Value="@showDataLabels" Name="dataLabels"></RadzenCheckBox>
+                <RadzenLabel Text="Show Data Labels" For="dataLabels" Style="margin-left: 8px; vertical-align: middle;" />
+            </RadzenCard>
+            <RadzenChart>
+                <RadzenDonutSeries Data="@PageModel?.AssignedToData" CategoryProperty="DisplayValue" ValueProperty="DataCount">
+                    <ChildContent>
+                        <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                    </ChildContent>
+                    <TitleTemplate>
+                        <div class="rz-donut-content">
+                            <div>Assigned To</div>
+                            <div>Ticket Count</div>
+                        </div>
+                    </TitleTemplate>
+                </RadzenDonutSeries>
+            </RadzenChart>
+        </div>
+        <div class="col-sm-12 col-lg-6">
+            <RadzenCard class="w-100 mb-4">
+                <RadzenCheckBox @bind-Value="@showDataLabels" Name="dataLabels"></RadzenCheckBox>
+                <RadzenLabel Text="Show Data Labels" For="dataLabels" Style="margin-left: 8px; vertical-align: middle;" />
+            </RadzenCard>
+            <RadzenChart>
+                <RadzenDonutSeries Data="@PageModel?.StatusData" CategoryProperty="DisplayValue" ValueProperty="DataCount">
+                    <ChildContent>
+                        <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                    </ChildContent>
+                    <TitleTemplate>
+                        <div class="rz-donut-content">
+                            <div>Status</div>
+                            <div>Ticket Count</div>
+                        </div>
+                    </TitleTemplate>
+                </RadzenDonutSeries>
+            </RadzenChart>
+        </div>
+    </div>
+    @*<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="20"
                     AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" RowRender="@OnRowRender"
                     Data="@PageModel" TItem="NotificationEntity" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
@@ -47,13 +87,13 @@
                 </Template>
             </RadzenDataGridColumn>
         </Columns>
-    </RadzenDataGrid>
+    </RadzenDataGrid>*@
 
 </div>
 @code {
     [CascadingParameter]
     public CascadingAppState AppState { get; set; }
-    private List<NotificationEntity> PageModel = new();
+    private OverviewReportEntity PageModel = new();
     private string PageMessage = string.Empty;
     private string ErrorMessage = string.Empty;
     protected override void OnInitialized()
@@ -64,7 +104,8 @@
     {
         try
         {
-            PageModel = ITPS.Data.Code.NotificationFactory.GetAllNotifications(AppState.CurrentUser.UserProfileKey);
+            PageModel = ITPS.Data.Code.TicketFactory.GetOverviewReportData();
+            if (PageModel.ErrorObject != null) { ErrorMessage = PageModel.ErrorObject.Message; }
             StateHasChanged();
         }
         catch (Exception ex)
@@ -73,24 +114,12 @@
         }
 
     }
-    private void UpdateNotificationToRead(NotificationEntity theNotification)
-    {
-        try
-        {
-            if (theNotification.ReadDateTime == DateTime.MinValue)
-            {
-                NotificationFactory.UpdateNotificationToRead(theNotification, AppState.CurrentUser.UserProfileKey);
-                ReloadModel();
-            }
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = ex.Message;
-        }
-    }
     protected void OnRowRender(RowRenderEventArgs<NotificationEntity> args)
     {
         if (args.Data.ReadDateTime == DateTime.MinValue)
         { args.Attributes.Add("style", $"background-color: #CFE2FF"); }
     }
+
+    bool showDataLabels = false;
+
 }

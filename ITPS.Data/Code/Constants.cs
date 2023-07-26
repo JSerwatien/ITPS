@@ -10,5 +10,8 @@ namespace ITPS.Data.Code
     {
         public const string DepartmentCode_IT = "IT";
         public const string DepartmentCode_HR = "HR";
+
+        public const string NotificationType_Alert = "ALERT";
+        public const string NotificationType_Message = "MESSG";
     }
 }

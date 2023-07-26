@@ -156,20 +156,13 @@ DB Rules:
 
 
 	Current HW:
-	1)	Notifications:
-		On Notification page, indicate on the row level whether a message is read or unread
-	2)	Come up with an improvement for the site (new page, new functionality, etc).
+	1)	Come up with an improvement for the site (new page, new functionality, etc).
 
 	Error Boundries?
-	ILSPY
 
-	Add alert when assigning ticket (to and from)
-	1)	When it's assigned to someone
-	2)	Assignment change
-	3)	Any status change, to the ticket owner
-
-	Remember Me
-
+	1)	On Notification datagrid, why is the truncated text not showing when mouse-over?
+	2)	Add new page to allow for the creation of new Notifications
+	
 	3)	Charts for front page
 	5)	On error on Ticket page, disable buttons
 	6)	Reporting

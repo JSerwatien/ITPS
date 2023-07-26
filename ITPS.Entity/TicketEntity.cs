@@ -13,6 +13,7 @@ namespace ITPS.Entity
     {
         public int TicketKey { get; set; }
         public int AssignedToUserProfileKey { get; set; }
+        public int PreviousAssignedToUserProfileKey { get; set; }
         public string AssignedToDisplayName { get; set; }
         public string TicketOwnerDisplayName { get; set; }
         public int UserProfileKey { get; set; }
@@ -20,6 +21,7 @@ namespace ITPS.Entity
         public string LongDescription { get; set; }
         public int Priority { get; set; }
         public int StatusKey { get; set; }
+        public int PreviousStatusKey { get; set; }
         public string Status { get; set; }
         public string StatusCode { get; set; }
         public bool StatusIsClosed { get; set; }
