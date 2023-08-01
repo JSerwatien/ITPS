@@ -67,7 +67,7 @@
     public void PopLogin()
     {
         SetProperty(this, "CurrentUser", new UserEntity());
-        dialogService.Open<ITPS.Pages.Login>("LogIn", null, new Radzen.DialogOptions() { Width = "800px", Height = "570px", Resizable = true, Draggable = true });
+        dialogService.Open<ITPS.Pages.Login>("LogIn", null, new Radzen.DialogOptions() { Width = "800px", Height = "650px", Resizable = true, Draggable = true });
         StateHasChanged();
     }
     private async void DialogPopupClosed(dynamic theResult)

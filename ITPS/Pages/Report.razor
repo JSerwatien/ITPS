@@ -6,13 +6,13 @@
     @if (!string.IsNullOrEmpty(PageMessage))
     {
         <div class="alert alert-success" role="alert">
-            @PageMessage
+            @((MarkupString)PageMessage)
         </div>
     }
     @if (!string.IsNullOrEmpty(ErrorMessage))
     {
         <div class="alert alert-danger" role="alert">
-            @ErrorMessage
+            @((MarkupString)ErrorMessage)
         </div>
     }
     <h1>Report</h1>
@@ -22,7 +22,7 @@
                 <RadzenCheckBox @bind-Value="@showDataLabels" Name="dataLabels"></RadzenCheckBox>
                 <RadzenLabel Text="Show Data Labels" For="dataLabels" Style="margin-left: 8px; vertical-align: middle;" />
             </RadzenCard>
-            <RadzenChart>
+            <RadzenChart SeriesClick="OnAssignedToSeriesClick">
                 <RadzenDonutSeries Data="@PageModel?.AssignedToData" CategoryProperty="DisplayValue" ValueProperty="DataCount">
                     <ChildContent>
                         <RadzenSeriesDataLabels Visible="@showDataLabels" />
@@ -41,7 +41,7 @@
                 <RadzenCheckBox @bind-Value="@showDataLabels" Name="dataLabels"></RadzenCheckBox>
                 <RadzenLabel Text="Show Data Labels" For="dataLabels" Style="margin-left: 8px; vertical-align: middle;" />
             </RadzenCard>
-            <RadzenChart>
+            <RadzenChart SeriesClick="OnStatusSeriesClick">
                 <RadzenDonutSeries Data="@PageModel?.StatusData" CategoryProperty="DisplayValue" ValueProperty="DataCount">
                     <ChildContent>
                         <RadzenSeriesDataLabels Visible="@showDataLabels" />
@@ -56,38 +56,21 @@
             </RadzenChart>
         </div>
     </div>
-    @*<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="20"
-                    AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" RowRender="@OnRowRender"
-                    Data="@PageModel" TItem="NotificationEntity" LogicalFilterOperator="LogicalFilterOperator.Or">
+    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5"
+                    AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                    Data="@GridData" TItem="TicketEntity" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
-            <RadzenDataGridColumn TItem="NotificationEntity" Title="Notification" TextAlign="TextAlign.Center">
+            <RadzenDataGridColumn TItem="TicketEntity" Title="ID" TextAlign="TextAlign.Center">
                 <Template Context="TheData">
-                    @((MarkupString) TheData.NotificationValue)
+                    <a href="/ticket/@TheData.TicketKey">@TheData.TicketKey</a>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="NotificationEntity" Property="NotificationType" Title="Type" />
-            <RadzenDataGridColumn TItem="NotificationEntity" Property="NotificationTarget" Title="Audience" />
-            <RadzenDataGridColumn TItem="TicketEntity" Property="CreatedDateTime" Title="Notification Date">
-                <Template Context="TheData">
-                    @TheData.CreatedDateTime.ToString("yyyy-MM-dd")
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="NotificationEntity" Property="CreatedDateTime" Title="Notification Date" />
-            <RadzenDataGridColumn TItem="NotificationEntity" Property="CreatedBy" Title="CreatedBy" />
-            <RadzenDataGridColumn TItem="NotificationEntity" Title="ID" TextAlign="TextAlign.Center">
-                <Template Context="TheData">
-                    @if (TheData.ReadDateTime == DateTime.MinValue)
-                    {
-                        <a href="JavaScript: void(0);" onclick="@(() => UpdateNotificationToRead(TheData))">UNREAD</a>
-                    }
-                    else
-                    {
-                        <a href="JavaScript: void(0);" onclick="@(() => UpdateNotificationToRead(TheData))">READ</a>
-                    }
-                </Template>
-            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="TicketEntity" Property="ShortDescription" Title="Description" />
+            <RadzenDataGridColumn TItem="TicketEntity" Property="AssignedToDisplayName" Title="Assigned To" />
+            <RadzenDataGridColumn TItem="TicketEntity" Property="DueDate" Title="Due Date" FormatString="{0:d}" />
+            <RadzenDataGridColumn TItem="TicketEntity" Property="Status" Title="Status" />
         </Columns>
-    </RadzenDataGrid>*@
+    </RadzenDataGrid>
 
 </div>
 @code {
@@ -96,6 +79,9 @@
     private OverviewReportEntity PageModel = new();
     private string PageMessage = string.Empty;
     private string ErrorMessage = string.Empty;
+    private OverviewChartEntity SelectedStatus = new();
+    private OverviewChartEntity SelectedAssignedTo = new();
+    private List<TicketEntity> GridData = new();
     protected override void OnInitialized()
     {
         ReloadModel();
@@ -106,6 +92,12 @@
         {
             PageModel = ITPS.Data.Code.TicketFactory.GetOverviewReportData();
             if (PageModel.ErrorObject != null) { ErrorMessage = PageModel.ErrorObject.Message; }
+            else
+            {
+                SelectedAssignedTo = PageModel.AssignedToData.Where(x => x.TableKey == -1).FirstOrDefault();
+                SelectedStatus = PageModel.StatusData.Where(x => x.TableKey == -1).FirstOrDefault();
+                FilterGrid();
+            }
             StateHasChanged();
         }
         catch (Exception ex)
@@ -119,7 +111,22 @@
         if (args.Data.ReadDateTime == DateTime.MinValue)
         { args.Attributes.Add("style", $"background-color: #CFE2FF"); }
     }
-
+    private void OnStatusSeriesClick(SeriesClickEventArgs args)
+    {
+        SelectedStatus = ((OverviewChartEntity)args.Data);
+        PageMessage = "Status: " + SelectedStatus.DisplayValue + " : " + SelectedStatus.DataCount;
+        FilterGrid();
+    }
+    private void OnAssignedToSeriesClick(SeriesClickEventArgs args)
+    {
+        SelectedAssignedTo = ((OverviewChartEntity)args.Data);
+        PageMessage = "Assigned To: " + SelectedAssignedTo.DisplayValue + " : " + SelectedAssignedTo.DataCount;
+        FilterGrid();
+    }
     bool showDataLabels = false;
-
+    private void FilterGrid()
+    {
+            GridData = PageModel.DetailData.Where(x => x.StatusKey == (SelectedStatus.TableKey == -1 ? x.StatusKey : SelectedStatus.TableKey) && x.AssignedToUserProfileKey == (SelectedAssignedTo.TableKey == -1 ? x.AssignedToUserProfileKey : SelectedAssignedTo.TableKey)).ToList();
+        PageMessage = "<center><u><b>Current Filtering On: </b></u> Assigned To -  " + SelectedAssignedTo.DisplayValue + " : " + SelectedAssignedTo.DataCount + " / Status - " + SelectedStatus.DisplayValue + " : " + SelectedStatus.DataCount + "</center>";
+    }
 }
