@@ -22,10 +22,26 @@ namespace ITPS.Data.Code
                 returnData.Statuses = StatusFactory.LoadStatuses(ds.Tables[0]);
                 returnData.Departments = LoadDepartments(ds.Tables[1]);
                 returnData.Users = LoadUsers(ds.Tables[2]);
+                returnData.NotificationTypes = LoadNotificationTypes(ds.Tables[3]);
             }
             catch (Exception ex)
             {
                 returnData.ErrorObject=ex;
+            }
+            return returnData;
+        }
+
+        private static List<NotificationTypeEntity> LoadNotificationTypes(DataTable dataTable)
+        {
+            List<NotificationTypeEntity> returnData = new();
+
+            foreach(DataRow newRow in dataTable.Rows)
+            {
+                NotificationTypeEntity newItem = new();
+                newItem.NotificationTypeKey = Convert.ToInt32(newRow["NotificationTypeKey"]);
+                newItem.NotificationTypeCode = newRow["NotificationTypeCode"].ToString();
+                newItem.Description = newRow["Description"].ToString();
+                returnData.Add(newItem);
             }
             return returnData;
         }
