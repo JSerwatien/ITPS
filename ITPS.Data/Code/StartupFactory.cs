@@ -68,6 +68,7 @@ namespace ITPS.Data.Code
                     newItem.DepartmentCode = newRow["DepartmentCode"].ToString();
                     returnData.Add(newItem);
                 }
+                returnData.Add(new UserEntity() { FirstName = "Everyone", DisplayName = "Everyone" });
                 return returnData;
             }
             catch (Exception ex)

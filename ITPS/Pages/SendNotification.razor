@@ -21,13 +21,12 @@
         <div class="col-md-6">
             <RadzenCard>
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Send Notification To:</RadzenText>
-                <RadzenDropDown @bind-Value=@PageModel.UserProfileKey TValue="int" Data=@AppState.CurrentUser.StartupObjects.Users TextProperty="DisplayName" ValueProperty="UserProfileKey" Style="width: 100%; max-width: 400px;" />
+                <RadzenDropDown @bind-Value=@PageModel.UserProfileKey TValue="int" Data=@AppState.CurrentUser.StartupObjects.Users.OrderBy(x => x.DisplayName) TextProperty="DisplayName" ValueProperty="UserProfileKey" Style="width: 100%; max-width: 400px;" />
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Notification Type: </RadzenText>
                 <RadzenDropDown @bind-Value=@PageModel.NotificationTypeKey TValue="int" Data=@AppState.CurrentUser.StartupObjects.NotificationTypes TextProperty="Description" ValueProperty="NotificationTypeKey" Style="width: 100%; max-width: 400px;" />
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Notification:</RadzenText>
                 <RadzenTextArea Placeholder="Description..." class="form-control" @bind-Value=@PageModel.NotificationValue />
             </RadzenCard>
-
             <RadzenButton Text="Save" Icon="save" ButtonStyle="ButtonStyle.Success" Style="float:right" Click="() => SaveNotification()"></RadzenButton>
         </div>
     </div>
@@ -44,9 +43,24 @@
     private void SaveNotification()
     {
         PageModel.CreatedBy = AppState.CurrentUser.UserName;
+        ErrorMessage = string.Empty;
+        PageMessage = string.Empty;
         ValidateEntry();
+        if (string.IsNullOrEmpty(ErrorMessage))
+        {
+            string returnValue = NotificationFactory.AddNewNotification(PageModel.UserProfileKey, PageModel.NotificationTypeKey, PageModel.NotificationValue, AppState.CurrentUser.StartupObjects.NotificationTypes);
+            if (LocalFunctions.IsNumeric(returnValue))
+            { PageMessage = "Your notification was sent successfully!"; PageModel = new(); }
+            else
+            { ErrorMessage = returnValue; }
+            StateHasChanged();
+        }
     }
     private void ValidateEntry()
     {
+        if(PageModel.NotificationTypeKey==0)
+        { ErrorMessage = "Please choose a Notification Type"; }
+        if (string.IsNullOrEmpty(PageModel.NotificationValue))
+        { ErrorMessage = "Please enter a Notification"; }
     }
 }

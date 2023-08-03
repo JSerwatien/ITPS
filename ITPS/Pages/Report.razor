@@ -17,11 +17,16 @@
     }
     <h1>Report</h1>
     <div class="row">
-        <div class="col-sm-12 col-lg-6">
+        <div class="col-sm-12 col-lg-12">
             <RadzenCard class="w-100 mb-4">
                 <RadzenCheckBox @bind-Value="@showDataLabels" Name="dataLabels"></RadzenCheckBox>
                 <RadzenLabel Text="Show Data Labels" For="dataLabels" Style="margin-left: 8px; vertical-align: middle;" />
             </RadzenCard>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 col-lg-6">
             <RadzenChart SeriesClick="OnAssignedToSeriesClick">
                 <RadzenDonutSeries Data="@PageModel?.AssignedToData" CategoryProperty="DisplayValue" ValueProperty="DataCount">
                     <ChildContent>
@@ -37,10 +42,6 @@
             </RadzenChart>
         </div>
         <div class="col-sm-12 col-lg-6">
-            <RadzenCard class="w-100 mb-4">
-                <RadzenCheckBox @bind-Value="@showDataLabels" Name="dataLabels"></RadzenCheckBox>
-                <RadzenLabel Text="Show Data Labels" For="dataLabels" Style="margin-left: 8px; vertical-align: middle;" />
-            </RadzenCard>
             <RadzenChart SeriesClick="OnStatusSeriesClick">
                 <RadzenDonutSeries Data="@PageModel?.StatusData" CategoryProperty="DisplayValue" ValueProperty="DataCount">
                     <ChildContent>
@@ -126,7 +127,7 @@
     bool showDataLabels = false;
     private void FilterGrid()
     {
-            GridData = PageModel.DetailData.Where(x => x.StatusKey == (SelectedStatus.TableKey == -1 ? x.StatusKey : SelectedStatus.TableKey) && x.AssignedToUserProfileKey == (SelectedAssignedTo.TableKey == -1 ? x.AssignedToUserProfileKey : SelectedAssignedTo.TableKey)).ToList();
+        GridData = PageModel.DetailData.Where(x => x.StatusKey == (SelectedStatus.TableKey == -1 ? x.StatusKey : SelectedStatus.TableKey) && x.AssignedToUserProfileKey == (SelectedAssignedTo.TableKey == -1 ? x.AssignedToUserProfileKey : SelectedAssignedTo.TableKey)).ToList();
         PageMessage = "<center><u><b>Current Filtering On: </b></u> Assigned To -  " + SelectedAssignedTo.DisplayValue + " : " + SelectedAssignedTo.DataCount + " / Status - " + SelectedStatus.DisplayValue + " : " + SelectedStatus.DataCount + "</center>";
     }
 }

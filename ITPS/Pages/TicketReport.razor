@@ -79,7 +79,7 @@
     {
         if(HideClosedTickets && HideAssignedTickets)
         {
-            PageModel = RawData.Where(x => x.StatusIsClosed == false && x.AssignedToUserProfileKey > 0).ToList();
+            PageModel = RawData.Where(x => x.StatusIsClosed == false && x.AssignedToUserProfileKey == 0).ToList();
         }
         else if(HideClosedTickets)
         {
@@ -87,7 +87,7 @@
         }
         else if (HideAssignedTickets)
         {
-            PageModel = RawData.Where(x => x.AssignedToUserProfileKey > 0).ToList();
+            PageModel = RawData.Where(x => x.AssignedToUserProfileKey ==0).ToList();
         }
         else
         {

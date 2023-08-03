@@ -1,5 +1,6 @@
 ﻿@page "/Notifications"
 @inject Radzen.DialogService dialogService
+@inject NavigationManager NavManager
 @using Radzen
 @using ITPS.Data.Code
 <div class="container-fluid" style="width:1500px !important; margin-left:-225px">
@@ -15,7 +16,14 @@
             @ErrorMessage
         </div>
     }
-    <h1>Notifications</h1>
+    <div class="row">
+        <div class="col-md-6 col-lg-6">
+            <h1>Notifications</h1>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <RadzenButton Text="Send Notification" Icon="save" ButtonStyle="ButtonStyle.Success" Style="float:right" Click="() => SendNotification()"></RadzenButton>
+        </div>
+    </div>
     <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="20"
                     AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" RowRender="@OnRowRender"
                     Data="@PageModel" TItem="NotificationEntity" LogicalFilterOperator="LogicalFilterOperator.Or">
@@ -92,5 +100,9 @@
     {
         if (args.Data.ReadDateTime == DateTime.MinValue)
         { args.Attributes.Add("style", $"background-color: #CFE2FF"); }
+    }
+    private void SendNotification()
+    {
+        NavManager.NavigateTo("/SendNotification");
     }
 }

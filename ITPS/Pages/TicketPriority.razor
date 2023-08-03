@@ -25,11 +25,11 @@
                 <Template Context="TheData">
                     @if(TheData.Priority==1)
                     {
-                        <span style="color: white!important"><a href="/ticket/@TheData.TicketKey">@TheData.TicketKey</a></span>
+                        <span style="color: white!important" title="@TheData.TicketKey"><a href="/ticket/@TheData.TicketKey">@TheData.TicketKey</a></span>
                     }
                     else
                     {
-                        <span style="color: black!important"><a href="/ticket/@TheData.TicketKey">@TheData.TicketKey</a></span>
+                        <span style="color: black!important" title="@TheData.TicketKey"><a href="/ticket/@TheData.TicketKey">@TheData.TicketKey</a></span>
                     }
                     
                 </Template>
@@ -38,11 +38,11 @@
                 <Template Context="TheData">
                     @if (TheData.Priority == 1)
                     {
-                        <span style="color: white!important">@TheData.ShortDescription</span>
+                        <span style="color: white!important" title="@TheData.ShortDescription">@TheData.ShortDescription</span>
                     }
                     else
                     {
-                        <span style="color: black!important">@TheData.ShortDescription</span>
+                        <span style="color: black!important" title="@TheData.ShortDescription">@TheData.ShortDescription</span>
                     }
 
                 </Template>
@@ -51,11 +51,11 @@
                 <Template Context="TheData">
                     @if (TheData.Priority == 1)
                     {
-                        <span style="color: white!important">@TheData.LongDescription</span>
+                        <span style="color: white!important" title="@TheData.LongDescription">@TheData.LongDescription</span>
                     }
                     else
                     {
-                        <span style="color: black!important">@TheData.LongDescription</span>
+                        <span style="color: black!important" title="@TheData.LongDescription">@TheData.LongDescription</span>
                     }
 
                 </Template>
@@ -64,11 +64,11 @@
                 <Template Context="TheData">
                     @if (TheData.Priority == 1)
                     {
-                        <span style="color: white!important">@TheData.AssignedToDisplayName</span>
+                        <span style="color: white!important" title="@TheData.AssignedToDisplayName">@TheData.AssignedToDisplayName</span>
                     }
                     else
                     {
-                        <span style="color: black!important">@TheData.AssignedToDisplayName</span>
+                        <span style="color: black!important" title="@TheData.AssignedToDisplayName">@TheData.AssignedToDisplayName</span>
                     }
 
                 </Template>
@@ -77,11 +77,11 @@
                 <Template Context="TheData">
                     @if (TheData.Priority == 1)
                     {
-                        <span style="color: white!important">@TheData.TicketOwnerDisplayName</span>
+                        <span style="color: white!important" title="@TheData.TicketOwnerDisplayName">@TheData.TicketOwnerDisplayName</span>
                     }
                     else
                     {
-                        <span style="color: black!important">@TheData.TicketOwnerDisplayName</span>
+                        <span style="color: black!important" title="@TheData.TicketOwnerDisplayName">@TheData.TicketOwnerDisplayName</span>
                     }
 
                 </Template>
@@ -90,11 +90,11 @@
                 <Template Context="TheData">
                     @if (TheData.Priority == 1)
                     {
-                        <span style="color: white!important">@TheData.DueDate.ToString("yyyy-MM-dd")</span>
+                        <span style="color: white!important" title="@TheData.DueDate.ToString("yyyy-MM-dd")">@TheData.DueDate.ToString("yyyy-MM-dd")</span>
                     }
                     else
                     {
-                        <span style="color: black!important">@TheData.DueDate.ToString("yyyy-MM-dd")</span>
+                        <span style="color: black!important" title="@TheData.DueDate.ToString("yyyy-MM-dd")">@TheData.DueDate.ToString("yyyy-MM-dd")</span>
                     }
 
                 </Template>
@@ -103,16 +103,16 @@
                 <Template Context="TheData">
                     @if (TheData.Priority == 1)
                     {
-                        <span style="color: white!important">@TheData.Status</span>
+                        <span style="color: white!important" title="@TheData.Status">@TheData.Status</span>
                     }
                     else
                     {
-                        <span style="color: black!important">@TheData.Status</span>
+                        <span style="color: black!important" title="@TheData.Status">@TheData.Status</span>
                     }
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="TicketEntity" Title="Priority" TextAlign="TextAlign.Center" Width="10%">
-                <Template Context="TheData">
+                <Template Context="TheData" >
                     <RadzenNumeric @bind-Value=@TheData.Priority Min="1" TValue="int" Max="@PageModel.Count" Change=@(args => SortGrid(TheData.TicketKey)) />
                 </Template>
             </RadzenDataGridColumn>

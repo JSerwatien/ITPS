@@ -68,6 +68,12 @@ namespace ITPS.Data.Code
                 throw ex;
             }
         }
+        public static string AddNewNotification(int userProfileKey, int notificationTypeKey, string notificationValue, List<NotificationTypeEntity> theTypes)
+        {
+            string notificationTypeCode = theTypes.Where(x => x.NotificationTypeKey == notificationTypeKey).FirstOrDefault().NotificationTypeCode;
+            return AddNewNotification(userProfileKey, notificationTypeCode, notificationValue);
+        }
+
         public static string AddNewNotification(int userProfileKey, string notificationTypeCode, string notificationValue)
         {
             string strSQL = "EXEC dbo.Notification_AddNotification '{0}', {1}, '{2}'";

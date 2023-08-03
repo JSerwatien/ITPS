@@ -154,19 +154,21 @@ DB Rules:
 	f)	Use table acronyms when using more than one table in a query
 	g)	Always use the WITH(NOLOCK) hint on all SELECT statements
 
-
-	Current HW:
-	1)	Come up with an improvement for the site (new page, new functionality, etc).
-
-	Error Boundries?
-
-	1)	On Notification datagrid, why is the truncated text not showing when mouse-over?
-	2)	Add new page to allow for the creation of new Notifications
+1)	Front Page
+	Navigation
+	Search
+	Alerts
+	Messages
+	Send New Notification
+	Profile Menu
 	
-	3)	Charts for front page
-	5)	On error on Ticket page, disable buttons
-	6)	Reporting
-	7)	General site cleanup
-	8)	Publishing
-
+2)	Ticket Menu	
+	Add New
+	Update Existing
+	
+3)	Reports
+	Overview (clickable filtering)
+	Ticket Report (filters)
+	Calendar (show how the Due Date drives the UI)
+	Priority
 
